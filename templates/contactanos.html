@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titulo %}Contáctanos{% endblock %}
+{% block content %}
+
+<section class="bg-dark text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-5 fw-bold">Contáctanos</h1>
+        <p class="lead">Escríbenos y te respondemos a la brevedad</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card shadow-sm border-0 p-4">
+                    <form action="https://formsubmit.co/TU-CORREO@gmail.com" method="POST">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="_subject" value="Nuevo mensaje desde Megadiseños">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nombre</label>
+                            <input type="text" name="nombre" class="form-control" placeholder="Tu nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Correo electrónico</label>
+                            <input type="email" name="email" class="form-control" placeholder="tucorreo@ejemplo.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Teléfono</label>
+                            <input type="text" name="telefono" class="form-control" placeholder="+56 9 XXXX XXXX">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mensaje</label>
+                            <textarea name="mensaje" class="form-control" rows="4" placeholder="¿En qué podemos ayudarte?" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 fw-bold">Enviar mensaje</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-4 mt-4 mt-md-0">
+                <div class="card shadow-sm border-0 p-4 h-100">
+                    <h5 class="fw-bold mb-4">Información de contacto</h5>
+                    <p><i class="fa fa-phone text-warning me-2"></i> +56 9 XXXX XXXX</p>
+                    <p><i class="fa fa-envelope text-warning me-2"></i> contacto@megadiseños.cl</p>
+                    <p><i class="fa fa-map-marker-alt text-warning me-2"></i> Santiago, Chile</p>
+                    <p><i class="fa fa-clock text-warning me-2"></i> Lun–Vie, 09:00–18:00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+

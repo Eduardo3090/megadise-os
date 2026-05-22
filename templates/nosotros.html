@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titulo %}Nosotros{% endblock %}
+{% block content %}
+
+<section class="bg-dark text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-5 fw-bold">Nuestro Equipo</h1>
+        <p class="lead">Las personas detrás de Megadiseños</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            {% for persona in equipo %}
+            <div class="col-md-3 text-center">
+                <div class="card h-100 shadow-sm border-0 p-3">
+                    <div class="mb-3">
+                        <i class="fa {{ persona.icono }} fa-3x text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold">{{ persona.nombre }}</h5>
+                    <p class="text-muted small">{{ persona.cargo }}</p>
+                    <p class="small">{{ persona.descripcion }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="bg-dark text-white py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">Nuestros números</h2>
+        <div class="row g-4 text-center">
+            <div class="col-md-3">
+                <h2 class="display-5 fw-bold text-warning">{{ proyecciones.clientes_satisfechos }}%</h2>
+                <p>Clientes satisfechos</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="display-5 fw-bold text-warning">{{ proyecciones.trabajos_entregados }}%</h2>
+                <p>Trabajos entregados a tiempo</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="display-5 fw-bold text-warning">{{ proyecciones.años_experiencia }}</h2>
+                <p>Años de experiencia</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="display-5 fw-bold text-warning">{{ proyecciones.proyectos_por_mes }}</h2>
+                <p>Proyectos por mes</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
