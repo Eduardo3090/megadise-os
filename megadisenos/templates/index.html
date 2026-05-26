@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-line"></div>
+  <div class="hero-noise"></div>
+
+  <div class="hero-left">
+    <span class="hero-tag">📍 Santiago, Chile</span>
+    <h1 class="hero-title">
+      Diseño &amp;<span class="accent">Impresión</span>Profesional
+    </h1>
+    <p class="hero-sub">Todo lo que necesitas para tu marca en un solo lugar. Calidad, velocidad y creatividad que marcan la diferencia.</p>
+    <div class="hero-btns">
+      <a href="/servicios" class="btn-primary">Ver servicios</a>
+      <a href="/contactanos" class="btn-ghost">Contáctanos</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-card">
+      <div class="icon">🎨</div>
+      <h3>Diseño Gráfico</h3>
+      <p>Logos, branding y artes para impresión</p>
+    </div>
+    <div class="hero-card">
+      <div class="icon">🖨️</div>
+      <h3>Impresión</h3>
+      <p>Digital y offset con calidad premium</p>
+    </div>
+    <div class="hero-card">
+      <div class="icon">🖼️</div>
+      <h3>Gran Formato</h3>
+      <p>Lonas, pendones y vinilos de gran impacto</p>
+    </div>
+    <div class="hero-card">
+      <div class="icon">🎁</div>
+      <h3>Artículos Promo</h3>
+      <p>Merchandising y objetos personalizados</p>
+    </div>
+  </div>
+</section>
+
+<!-- POR QUÉ ELEGIRNOS -->
+<section id="porque">
+  <span class="section-tag reveal">Nuestras ventajas</span>
+  <h2 class="section-title reveal">¿Por qué elegirnos?</h2>
+  <p class="section-sub reveal">Somos el socio creativo que tu marca necesita. Combinamos talento, tecnología y compromiso.</p>
+
+  <div class="porque-grid">
+    <div class="porque-card reveal">
+      <div class="icon">🎨</div>
+      <h3>Diseño profesional</h3>
+      <p>Creamos artes a medida para tu marca, con criterio estético y atención al detalle que te diferencia de la competencia.</p>
+    </div>
+    <div class="porque-card reveal">
+      <div class="icon">🖨️</div>
+      <h3>Impresión de calidad</h3>
+      <p>Equipos de última generación que garantizan colores vibrantes, nitidez perfecta y acabados duraderos en cada trabajo.</p>
+    </div>
+    <div class="porque-card reveal">
+      <div class="icon">⏱️</div>
+      <h3>Entrega rápida</h3>
+      <p>Cumplimos los plazos porque tu tiempo importa. Coordinamos cada etapa para que recibas tu pedido cuando lo necesitas.</p>
+    </div>
+    <div class="porque-card reveal">
+      <div class="icon">💬</div>
+      <h3>Atención personalizada</h3>
+      <p>Te acompañamos desde la idea hasta el producto final. Tu satisfacción es nuestra prioridad en cada proyecto.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STATS RÁPIDOS -->
+<section style="background:var(--ink); padding:5rem 5vw;">
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08);">
+    <div class="stat-card reveal" style="text-align:center;">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Clientes satisfechos</span>
+    </div>
+    <div class="stat-card reveal" style="text-align:center;">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Trabajos a tiempo</span>
+    </div>
+    <div class="stat-card reveal" style="text-align:center;">
+      <span class="stat-num">7</span>
+      <span class="stat-label">Años de experiencia</span>
+    </div>
+    <div class="stat-card reveal" style="text-align:center;">
+      <span class="stat-num">5+</span>
+      <span class="stat-label">Proyectos por mes</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section style="background:var(--paper); text-align:center; padding:6rem 5vw;">
+  <span class="section-tag reveal">¿Listo para empezar?</span>
+  <h2 class="section-title reveal">Hagamos realidad<br>tu proyecto</h2>
+  <p class="section-sub reveal" style="margin:0 auto 2.5rem;">Escríbenos hoy y te responderemos a la brevedad con una cotización a medida.</p>
+  <a href="/contactanos" class="btn-primary reveal">Solicitar cotización →</a>
+</section>
+
+{% endblock %}

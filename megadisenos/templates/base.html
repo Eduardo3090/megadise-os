@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Megadiseños — {% block titulo %}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <div class="cursor" id="cursor"></div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a class="nav-logo" href="/">MEGA<span>DISEÑOS</span></a>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Inicio</a></li>
+      <li><a href="/nosotros">Nosotros</a></li>
+      <li><a href="/servicios">Servicios</a></li>
+      <li><a href="/funciones-futuras">Próximamente</a></li>
+      <li><a href="/contactanos" class="nav-cta">Contáctanos</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-logo">MEGADISEÑOS</p>
+    <div class="footer-divider"></div>
+    <p>📞 +56 9 XXXX XXXX &nbsp;|&nbsp; ✉️ contacto@megadiseños.cl &nbsp;|&nbsp; 📍 Santiago, Chile</p>
+    <p>© 2026 Megadiseños — Todos los derechos reservados</p>
+  </footer>
+
+  <script>
+    /* Cursor personalizado */
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.querySelectorAll('a,button,.hero-card,.servicio-card,.porque-card,.prox-card,.equipo-card').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+    });
+
+    /* Navbar scroll */
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    /* Hamburger */
+    const hbg = document.getElementById('hamburger');
+    const links = document.getElementById('nav-links');
+    hbg.addEventListener('click', () => links.classList.toggle('open'));
+
+    /* Scroll reveal */
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

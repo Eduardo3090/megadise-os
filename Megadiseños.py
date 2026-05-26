@@ -18,7 +18,7 @@ def index():
 def nosotros():
 
     # Lista del equipo de trabajo
-    # Íconos disponibles (Font Awesome): fa-user-tie, fa-paint-brush, fa-print,
+    # Íconos disponibles (Font Awesome): fa-user-tie, fa-paint-brush, fa-print,giy
     # fa-desktop, fa-camera, fa-cut, fa-pencil-alt, fa-cog, fa-star
     equipo = [
         {
