@@ -8,89 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<!-- Botón flotante WhatsApp -->
-<a href="https://wa.me/56948623875" target="_blank"
-   style="position:fixed; bottom:90px; right:20px; background-color:#25D366;
-          color:white; border-radius:50px; padding:12px 18px;
-          font-size:14px; font-weight:bold; text-decoration:none;
-          box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:999;">
-    <i class="fa fa-brands fa-whatsapp me-1"></i> WhatsApp
-</a>
-
-<!-- Botón flotante correo -->
-<button onclick="document.getElementById('modalCorreo').style.display='flex'"
-        style="position:fixed; bottom:30px; right:20px; background-color:#FFC107;
-               color:#000; border:none; border-radius:50px; padding:12px 18px;
-               font-size:14px; font-weight:bold; cursor:pointer;
-               box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:999;">
-    <i class="fa fa-envelope me-1"></i> Recibe asesoría
-</button>
-
-<!-- Modal -->
-<div id="modalCorreo"
-     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6);
-            z-index:1050; align-items:center; justify-content:center;">
-    <div style="background:#fff; border-radius:12px; padding:35px;
-                max-width:420px; width:90%; position:relative; text-align:center;">
-        <button onclick="document.getElementById('modalCorreo').style.display='none'"
-                style="position:absolute; top:12px; right:16px; background:none;
-                       border:none; font-size:20px; cursor:pointer; color:#aaa;">
-            ✕
-        </button>
-        <h5 style="font-weight:bold; margin-bottom:8px;">¿Tienes un proyecto en mente?</h5>
-        <p style="color:#666; font-size:14px; margin-bottom:20px;">
-            Déjanos tu correo y te enviamos información para ayudarte a concretarlo.
-        </p>
-        <input type="email" id="inputCorreo" placeholder="tucorreo@empresa.cl"
-               style="width:100%; padding:10px 14px; border:1px solid #ddd;
-                      border-radius:6px; font-size:14px; margin-bottom:12px;">
-        <button onclick="enviarCorreo()"
-                style="width:100%; background-color:#FFC107; border:none;
-                       padding:11px; border-radius:6px; font-weight:bold;
-                       font-size:15px; cursor:pointer;">
-            Enviar
-        </button>
-        <p id="mensajeModal" style="margin-top:12px; font-size:13px; color:green; display:none;">
-            ✅ ¡Listo! Revisa tu correo pronto.
-        </p>
-    </div>
-</div>
-
-<script>
-    function enviarCorreo() {
-        const email = document.getElementById('inputCorreo').value;
-        if (!email || !email.includes('@')) {
-            alert('Por favor ingresa un correo válido.');
-            return;
-        }
-        fetch('/suscribir', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email })
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.exito) {
-                    document.getElementById('mensajeModal').style.display = 'block';
-                    document.getElementById('inputCorreo').value = '';
-                    setTimeout(() => {
-                        document.getElementById('modalCorreo').style.display = 'none';
-                        document.getElementById('mensajeModal').style.display = 'none';
-                    }, 3000);
-                } else {
-                    alert('Hubo un error. Intenta de nuevo.');
-                }
-            });
-    }
-</script>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="{{ url_for('static', filename='logo_megadisenos.png') }}"
-                     alt="Megadiseños"
-                     height="45"
-                     style="object-fit: contain;">
+                <img
+                    src="{{ url_for('static', filename='logo megadisenos.jpg') }}"
+                    alt="Megadiseños"
+                    height="45"
+                    style="object-fit: contain;"
+                >
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
                 <span class="navbar-toggler-icon"></span>
@@ -107,16 +34,20 @@
             </div>
         </div>
     </nav>
+
     <main>
         {% block content %}{% endblock %}
     </main>
+
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container text-center">
-            <img src="{{ url_for('static', filename='logo_megadisenos.png') }}"
-                 alt="Megadiseños"
-                 height="50"
-                 class="mb-2"
-                 style="object-fit: contain;">
+            <img
+                src="{{ url_for('static', filename='logo megadisenos.jpg') }}"
+                alt="Megadiseños"
+                height="50"
+                class="mb-2"
+                style="object-fit: contain;"
+            >
             <p class="mb-1">
                 <a href="https://wa.me/56948623875" target="_blank" class="text-warning text-decoration-none">
                     📞 +56 9 4862 3875
@@ -128,7 +59,83 @@
             <p class="text-secondary mb-0 small">© 2026 Megadiseños — Todos los derechos reservados</p>
         </div>
     </footer>
+
+    <!-- Botón flotante WhatsApp -->
+    <a href="https://wa.me/56948623875" target="_blank"
+       style="position:fixed; bottom:90px; right:20px; background-color:#25D366;
+              color:white; border-radius:50px; padding:12px 18px;
+              font-size:14px; font-weight:bold; text-decoration:none;
+              box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:999;">
+        <i class="fa fa-brands fa-whatsapp me-1"></i> WhatsApp
+    </a>
+
+    <!-- Botón flotante correo -->
+    <button onclick="document.getElementById('modalCorreo').style.display='flex'"
+            style="position:fixed; bottom:30px; right:20px; background-color:#FFC107;
+                   color:#000; border:none; border-radius:50px; padding:12px 18px;
+                   font-size:14px; font-weight:bold; cursor:pointer;
+                   box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:999;">
+        <i class="fa fa-envelope me-1"></i> Recibe asesoría
+    </button>
+
+    <!-- Modal de captura de correo -->
+    <div id="modalCorreo"
+         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6);
+                z-index:1050; align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:12px; padding:35px;
+                    max-width:420px; width:90%; position:relative; text-align:center;">
+            <button onclick="document.getElementById('modalCorreo').style.display='none'"
+                    style="position:absolute; top:12px; right:16px; background:none;
+                           border:none; font-size:20px; cursor:pointer; color:#aaa;">✕</button>
+            <h5 style="font-weight:bold; margin-bottom:8px;">¿Tienes un proyecto en mente?</h5>
+            <p style="color:#666; font-size:14px; margin-bottom:20px;">
+                Déjanos tu correo y te enviamos información para ayudarte a concretarlo.
+            </p>
+            <input type="email" id="inputCorreo" placeholder="tucorreo@empresa.cl"
+                   style="width:100%; padding:10px 14px; border:1px solid #ddd;
+                          border-radius:6px; font-size:14px; margin-bottom:12px;">
+            <button onclick="enviarCorreo()"
+                    style="width:100%; background-color:#FFC107; border:none;
+                           padding:11px; border-radius:6px; font-weight:bold;
+                           font-size:15px; cursor:pointer;">
+                Enviar
+            </button>
+            <p id="mensajeModal" style="margin-top:12px; font-size:13px; color:green; display:none;">
+                ✅ ¡Listo! Revisa tu correo pronto.
+            </p>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    function enviarCorreo() {
+        const email = document.getElementById('inputCorreo').value;
+        if (!email || !email.includes('@')) {
+            alert('Por favor ingresa un correo válido.');
+            return;
+        }
+        fetch('/suscribir', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.exito) {
+                document.getElementById('mensajeModal').style.display = 'block';
+                document.getElementById('inputCorreo').value = '';
+                setTimeout(() => {
+                    document.getElementById('modalCorreo').style.display = 'none';
+                    document.getElementById('mensajeModal').style.display = 'none';
+                }, 3000);
+            } else {
+                alert('Hubo un error. Intenta de nuevo.');
+            }
+        });
+    }
+    </script>
+
     {% block scripts %}{% endblock %}
 </body>
 </html>
