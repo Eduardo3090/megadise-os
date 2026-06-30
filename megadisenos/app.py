@@ -86,7 +86,36 @@ def tienda():
             "precio": 35000,
             "imagen": "https://via.placeholder.com/400x400.png?text=Se%C3%B1al%C3%A9tica"
         },
-        # Agrega aquí más productos con el mismo formato
+        {
+            "nombre": "Talonario",
+            "categoria": "Papelería",
+            "precio": 20000,
+            "imagen": "https://via.placeholder.com/400x400.png?text=Talonario"
+        },
+        {
+            "nombre": "Gigantografía",
+            "categoria": "Publicidad",
+            "precio": 42000,
+            "imagen": "https://via.placeholder.com/400x400.png?text=Gigantografia"
+        },
+        {
+            "nombre": "Libros tapa dura",
+            "categoria": "Papelería",
+            "precio": 35000,
+            "imagen": "https://via.placeholder.com/400x400.png?text=Libro+Tapa+Dura"
+        },
+        {
+            "nombre": "Afiches",
+            "categoria": "Publicidad",
+            "precio": 16000,
+            "imagen": "https://via.placeholder.com/400x400.png?text=Afiches"
+        },
+        {
+            "nombre": "Flyer",
+            "categoria": "Publicidad",
+            "precio": 12000,
+            "imagen": "https://via.placeholder.com/400x400.png?text=Flyer"
+        },
     ]
     return render_template('tienda.html', productos=productos)
 
