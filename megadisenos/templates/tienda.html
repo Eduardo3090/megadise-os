@@ -2,39 +2,40 @@
 {% block titulo %}Tienda{% endblock %}
 {% block content %}
 
-<section class="bg-dark text-white text-center py-5">
-    <div class="container">
-        <h1 class="display-5 fw-bold">Tienda Megadiseños</h1>
-        <p class="lead">Productos y servicios listos para tu empresa</p>
-    </div>
-</section>
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <span class="section-tag">Catálogo completo</span>
+    <h1>Tienda<br>Megadiseños</h1>
+    <p>Productos y servicios listos para tu empresa.</p>
+  </div>
+</div>
 
-<section class="py-5">
-    <div class="container">
-        <div class="row g-4">
-            {% for producto in productos %}
-            <div class="col-md-4 col-sm-6">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="ratio ratio-1x1 bg-light">
-                        <img src="{{ producto.imagen }}" class="card-img-top" alt="{{ producto.nombre }}" style="object-fit: cover;">
-                    </div>
-                    <div class="card-body d-flex flex-column">
-                        <span class="badge bg-warning text-dark mb-2" style="width: fit-content;">{{ producto.categoria }}</span>
-                        <h5 class="fw-bold">{{ producto.nombre }}</h5>
-                        {% if producto.precio %}
-                        <p class="fs-5 fw-bold text-dark mt-auto mb-2">${{ "{:,.0f}".format(producto.precio).replace(",", ".") }} CLP</p>
-                        {% else %}
-                        <p class="fs-6 fw-bold text-secondary mt-auto mb-2">Cotizar</p>
-                        {% endif %}
-                        <button class="btn btn-warning fw-bold w-100">
-                            <i class="fa fa-cart-plus me-2"></i>Agregar al carrito
-                        </button>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+<!-- PRODUCTOS -->
+<section style="background: var(--paper);">
+  <div class="equipo-grid" style="margin-top: 0;">
+    {% for producto in productos %}
+    <div class="equipo-card reveal" style="text-align:left; padding:0; overflow:hidden;">
+      <div style="aspect-ratio: 1/1; background:#fff; overflow:hidden;">
+        <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}" style="width:100%; height:100%; object-fit:cover; display:block;">
+      </div>
+      <div style="padding:1.8rem;">
+        <span class="badge badge-gold" style="margin-bottom:.8rem;">{{ producto.categoria }}</span>
+        <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:.4rem;">{{ producto.nombre }}</h3>
+        {% if producto.precio %}
+        <p style="font-family: var(--serif); font-size:1.6rem; color: var(--ink); margin-bottom:1rem;">
+          ${{ "{:,.0f}".format(producto.precio).replace(",", ".") }} CLP
+        </p>
+        {% else %}
+        <p style="font-size:.9rem; font-weight:700; color: var(--gray); margin-bottom:1rem;">Cotizar</p>
+        {% endif %}
+        <button class="btn-primary" style="width:100%; border:none; cursor:pointer; text-align:center;">
+          <i class="fa fa-cart-plus" style="margin-right:.5rem;"></i>Agregar al carrito
+        </button>
+      </div>
     </div>
+    {% endfor %}
+  </div>
 </section>
 
 {% endblock %}
