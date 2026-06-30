@@ -77,6 +77,18 @@ def contactanos():
         return jsonify({"exito": True, "mensaje": "Mensaje enviado correctamente"})
     return render_template('contactanos.html')
 
+@app.route('/tienda')
+def tienda():
+    productos = [
+        {
+            "nombre": "Señaléticas",
+            "categoria": "Artículos varios",
+            "precio": 35000,
+            "imagen": "https://via.placeholder.com/400x400.png?text=Se%C3%B1al%C3%A9tica"
+        },
+        # Agrega aquí más productos con el mismo formato
+    ]
+    return render_template('tienda.html', productos=productos)
 
 @app.route('/funciones-futuras')
 def funciones_futuras():
