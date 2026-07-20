@@ -75,23 +75,39 @@
         <i class="fa fa-envelope"></i> Recibe asesoría
     </button>
 
-    <!-- Modal de captura de correo -->
-    <div id="modalCorreo"
-         style="display:none; position:fixed; inset:0; background:rgba(13,13,13,.75);
-                z-index:1050; align-items:center; justify-content:center;">
-        <div style="background: var(--card); padding:2.5rem; max-width:420px; width:90%;
-                    position:relative; text-align:center; border-top: 4px solid var(--gold);">
-            <button onclick="document.getElementById('modalCorreo').style.display='none'"
-                    style="position:absolute; top:14px; right:18px; background:none;
-                           border:none; font-size:20px; cursor:pointer; color: var(--gray);">✕</button>
-            <h3 style="font-family: var(--serif); font-size: 1.6rem; margin-bottom:.6rem;">
-                ¿Tienes un proyecto en mente?
-            </h3>
-            <p style="color: var(--gray); font-size:.9rem; margin-bottom:1.5rem; line-height:1.6;">
-                Déjanos tu correo y te enviamos información para ayudarte a concretarlo.
-            </p>
-            <input type="email" id="inputCorreo" placeholder="tucorreo@empresa.cl"
-                   style="width:100%; padding:.8rem 1rem; border:1px solid #e0d9cf;
-                          background: var(--paper); font-family: var(--body); font-size:.9rem;
-                          color: var(--ink); margin-bottom:1rem; outline:none;">
-            <div style="display:flex;
+<!-- Modal de captura de correo -->
+<div id="modalCorreo"
+     style="display:none; position:fixed; inset:0; background:rgba(13,13,13,.75);
+            z-index:1050; align-items:center; justify-content:center;">
+    <div style="background: var(--card); padding:2.5rem; max-width:420px; width:90%;
+                position:relative; text-align:center; border-top: 4px solid var(--gold);
+                overflow-y: auto; max-height: 90vh;">
+        <button onclick="document.getElementById('modalCorreo').style.display='none'"
+                style="position:absolute; top:14px; right:18px; background:none;
+                       border:none; font-size:20px; cursor:pointer; color: var(--gray);">✕</button>
+        <h3 style="font-family: var(--serif); font-size: 1.6rem; margin-bottom:.6rem;">
+            ¿Tienes un proyecto en mente?
+        </h3>
+        <p style="color: var(--gray); font-size:.9rem; margin-bottom:1.5rem; line-height:1.6;">
+            Déjanos tu correo y te enviamos información para ayudarte a concretarlo.
+        </p>
+        <input type="email" id="inputCorreo" placeholder="tucorreo@empresa.cl"
+               style="width:100%; padding:.8rem 1rem; border:1px solid #e0d9cf;
+                      background: var(--paper); font-family: var(--body); font-size:.9rem;
+                      color: var(--ink); margin-bottom:1rem; outline:none;">
+        <div style="display:flex; align-items:flex-start; gap:.6rem; margin-bottom:1.2rem; text-align:left;">
+            <input type="checkbox" id="checkPrivacidad"
+                   style="margin-top:3px; accent-color: var(--gold); width:16px; height:16px; flex-shrink:0;">
+            <label for="checkPrivacidad" style="font-size:.82rem; color: var(--gray); line-height:1.5;">
+                Acepto la <a href="/privacidad" target="_blank" style="color: var(--gold);">Política de Privacidad</a>
+                y autorizo el tratamiento de mis datos conforme a la Ley 19.628.
+            </label>
+        </div>
+        <button onclick="enviarCorreo()" class="btn-primary" style="width:100%; border:none; cursor:pointer;">
+            Enviar
+        </button>
+        <p id="mensajeModal" style="margin-top:1rem; font-size:.85rem; color:#2a8f4d; display:none;">
+            ✅ ¡Listo! Revisa tu correo pronto.
+        </p>
+    </div>
+</div>
