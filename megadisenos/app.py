@@ -52,7 +52,7 @@ def nosotros():
         {
             "nombre": "Laura Rosado",
             "cargo": "Gerente general y diseñadora gráfica",
-            "descripcion": "Fundadora con 20 años de experiencia",
+            "descripcion": "Fundadora de Megadiseños",
             "icono": "fa-user-tie"
         },
     ]
@@ -67,35 +67,35 @@ def nosotros():
 @app.route('/servicios')
 def servicios():
     servicios_por_cliente = {
-        "Impresión Digital": {
-            "icono": "🖨️",
-            "descripcion": "Alta calidad en tirajes cortos y medianos",
-            "servicios": ["Flyers", "Afiches", "Brochures"]
-        },
-        "Impresión Offset": {
-            "icono": "📄",
-            "descripcion": "Ideal para grandes tirajes con bajo costo unitario",
-            "servicios": ["Servicios de publicidad y imprenta"]
-        },
         "Gran Formato": {
             "icono": "🖼️",
-            "descripcion": "Lonas, pendones, tótems y más",
-            "servicios": ["Lonas publicitarias", "Pendones", "Vinilos"]
+            "descripcion": "Pendones, rollers y gigantografías de alto impacto",
+            "servicios": ["Pendones y rollers", "Gigantografías"]
+        },
+        "Vinilos y Adhesivos": {
+            "icono": "🏷️",
+            "descripcion": "Vinilos y adhesivos publicitarios para tu marca",
+            "servicios": ["Vinilos publicitarios", "Adhesivos publicitarios", "Empavonados"]
+        },
+        "Papelería Corporativa": {
+            "icono": "📄",
+            "descripcion": "Papelería y talonarios para tu empresa",
+            "servicios": ["Papelería corporativa", "Talonarios", "Agendas corporativas"]
         },
         "Diseño Gráfico": {
             "icono": "🎨",
-            "descripcion": "Creación y adaptación de artes para impresión",
-            "servicios": ["Diseño de logotipos", "Diagramación", "Retoque fotográfico"]
+            "descripcion": "Diseño gráfico profesional para cada proyecto",
+            "servicios": ["Diseño gráfico profesional"]
         },
-        "Artículos Promocionales": {
+        "Regalos Empresariales": {
             "icono": "🎁",
-            "descripcion": "Personalización de objetos con tu marca",
-            "servicios": ["Tazas personalizadas", "Poleras sublimadas", "Calendarios"]
+            "descripcion": "Artículos personalizados para tu empresa",
+            "servicios": ["Regalos empresariales", "Sublimación"]
         },
-        "Packaging y Etiquetas": {
-            "icono": "📦",
-            "descripcion": "Empaques y etiquetas para tus productos",
-            "servicios": ["Etiquetas autoadhesivas", "Cajas troqueladas"]
+        "Grabado y Lamicoide": {
+            "icono": "⚙️",
+            "descripcion": "Grabado láser y lamicoide de precisión",
+            "servicios": ["Grabado láser", "Lamicoide"]
         },
     }
     return render_template('servicios.html', servicios=servicios_por_cliente)
