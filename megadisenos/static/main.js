@@ -42,7 +42,7 @@ function enviarCorreo() {
     return;
   }
 
-  fetch('/api/contacto', {
+  fetch('/suscribir', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email, consentimiento: acepta })
