@@ -149,9 +149,9 @@ section { padding: 7rem 5vw; }
 #hero::before {
   content: '';
   position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 140px;
-  background: linear-gradient(to bottom, transparent, var(--paper));
+  bottom: -3px; left: 0; right: 0;
+  height: 3px;
+  background: var(--ink);
   pointer-events: none;
   z-index: 2;
 }
