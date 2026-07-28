@@ -146,6 +146,15 @@ section { padding: 7rem 5vw; }
   position: relative;
   overflow: hidden;
 }
+#hero::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 140px;
+  background: linear-gradient(to bottom, transparent, var(--paper));
+  pointer-events: none;
+  z-index: 2;
+}
 .hero-bg-line {
   position: absolute; top: 0; left: 50%; bottom: 0; width: 1px;
   background: rgba(255,255,255,.06);
