@@ -22,22 +22,30 @@
 
   <div class="hero-right">
     <div class="hero-card">
-      <div class="icon">🎨</div>
+      <div class="icon" style="width:100%; aspect-ratio:1/1; overflow:hidden; margin-bottom:.7rem;">
+        <img src="{{ url_for('static', filename='imprenta-offset.jpg') }}" alt="Diseño Gráfico" style="width:100%; height:100%; object-fit:cover; display:block;">
+      </div>
       <h3>Diseño Gráfico</h3>
       <p>Logos, branding y artes para impresión</p>
     </div>
     <div class="hero-card">
-      <div class="icon">🖨️</div>
+      <div class="icon" style="width:100%; aspect-ratio:1/1; overflow:hidden; margin-bottom:.7rem;">
+        <img src="{{ url_for('static', filename='impresion-rodillos.jpg') }}" alt="Impresión" style="width:100%; height:100%; object-fit:cover; display:block;">
+      </div>
       <h3>Impresión</h3>
       <p>Digital y offset con calidad premium</p>
     </div>
     <div class="hero-card">
-      <div class="icon">🖼️</div>
+      <div class="icon" style="width:100%; aspect-ratio:1/1; overflow:hidden; margin-bottom:.7rem;">
+        <img src="{{ url_for('static', filename='gran-formato.jpg') }}" alt="Gran Formato" style="width:100%; height:100%; object-fit:cover; display:block;">
+      </div>
       <h3>Gran Formato</h3>
       <p>Lonas, pendones y vinilos de gran impacto</p>
     </div>
     <div class="hero-card">
-      <div class="icon">🎁</div>
+      <div class="icon" style="width:100%; aspect-ratio:1/1; overflow:hidden; margin-bottom:.7rem;">
+        <img src="{{ url_for('static', filename='lamicoide.jpg') }}" alt="Artículos Promo" style="width:100%; height:100%; object-fit:cover; display:block;">
+      </div>
       <h3>Artículos Promo</h3>
       <p>Merchandising y objetos personalizados</p>
     </div>
@@ -83,24 +91,50 @@
 
   <div class="porque-grid">
     <div class="porque-card reveal">
-      <div class="icon">🎨</div>
-      <h3>Diseño profesional</h3>
-      <p>Creamos artes a medida para tu marca, con criterio estético y atención al detalle que te diferencia de la competencia.</p>
+      <div class="icon">🎯</div>
+      <h3>Asesoría experta</h3>
+      <p>Te guiamos al éxito de tu proyecto.</p>
     </div>
     <div class="porque-card reveal">
-      <div class="icon">🖨️</div>
-      <h3>Impresión de calidad</h3>
-      <p>Equipos de última generación que garantizan colores vibrantes, nitidez perfecta y acabados duraderos en cada trabajo.</p>
+      <div class="icon">✨</div>
+      <h3>Impacto visual</h3>
+      <p>Hacemos que tu marca destaque.</p>
     </div>
     <div class="porque-card reveal">
       <div class="icon">⏱️</div>
-      <h3>Entrega rápida</h3>
-      <p>Cumplimos los plazos porque tu tiempo importa. Coordinamos cada etapa para que recibas tu pedido cuando lo necesitas.</p>
+      <h3>Calidad y rapidez</h3>
+      <p>Tus proyectos impecables y a tiempo.</p>
     </div>
     <div class="porque-card reveal">
-      <div class="icon">💬</div>
-      <h3>Atención personalizada</h3>
-      <p>Te acompañamos desde la idea hasta el producto final. Tu satisfacción es nuestra prioridad en cada proyecto.</p>
+      <div class="icon">💻</div>
+      <h3>Fácil y online</h3>
+      <p>Soluciones gráficas sin complicaciones.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROYECTOS DESTACADOS -->
+<section style="background: var(--ink); padding: 6rem 5vw;">
+  <span class="section-tag reveal" style="color: var(--gold2);">Casos reales</span>
+  <h2 class="section-title reveal" style="color:#fff;">Proyectos destacados</h2>
+  <div class="prox-grid">
+    <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
+      <img src="{{ url_for('static', filename='proyecto-gigantografia-estatal.jpg') }}" alt="Gigantografías estatales" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <div style="padding:1.5rem;">
+        <h3>Gigantografías estatales</h3>
+      </div>
+    </div>
+    <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
+      <img src="{{ url_for('static', filename='proyecto-empavonado.jpg') }}" alt="Empavonados" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <div style="padding:1.5rem;">
+        <h3>Empavonados</h3>
+      </div>
+    </div>
+    <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
+      <img src="{{ url_for('static', filename='proyecto-agendas.jpg') }}" alt="Agendas Corporativas" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <div style="padding:1.5rem;">
+        <h3>Agendas Corporativas</h3>
+      </div>
     </div>
   </div>
 </section>
