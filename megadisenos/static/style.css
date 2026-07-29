@@ -165,17 +165,17 @@ section { padding: 7rem 5vw; }
 }
 .hero-title {
   font-family: var(--serif);
-  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-size: clamp(2.6rem, 5vw, 4.8rem);
   line-height: .95;
   color: #fff;
   animation: fadeUp .7s .25s both;
 }
 .hero-title .accent { color: var(--gold); display: block; }
 .hero-sub {
-  margin-top: 1.5rem;
+  margin-top: 1.2rem;
   color: rgba(255,255,255,.6);
-  font-size: 1.05rem;
-  line-height: 1.65;
+  font-size: .92rem;
+  line-height: 1.6;
   max-width: 38ch;
   animation: fadeUp .7s .4s both;
 }
@@ -188,8 +188,8 @@ section { padding: 7rem 5vw; }
   position: relative; z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: .7rem;
-  max-width: 380px;
+  gap: clamp(.5rem, 1vw, .7rem);
+  max-width: clamp(260px, 26vw, 380px);
   margin-left: auto;
   animation: fadeUp .8s .3s both;
 }
