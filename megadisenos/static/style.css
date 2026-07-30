@@ -481,3 +481,8 @@ footer p { font-size: .82rem; line-height: 1.7; }
   .nav-links.open { display: flex; }
   nav { flex-wrap: wrap; }
 }
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
