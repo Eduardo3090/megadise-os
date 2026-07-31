@@ -42,8 +42,8 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 900;
   display: flex; align-items: center; justify-content: space-between;
   padding: 1.1rem 5vw;
-  background: #f5f0e8;
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  background: #5c3d24;
+  box-shadow: 0 2px 12px rgba(0,0,0,.2);
   transition: box-shadow .4s;
 }
 nav.scrolled {
@@ -56,10 +56,10 @@ nav.scrolled {
   color: var(--gold);
   text-decoration: none;
 }
-.nav-logo span { color: var(--ink); }
+.nav-logo span { color: #fff; }
 .nav-links { display: flex; gap: 2rem; list-style: none; }
 .nav-links a {
-  color: var(--ink);
+  color: #fff;
   text-decoration: none;
   font-size: .88rem;
   font-weight: 500;
@@ -85,7 +85,7 @@ nav.scrolled {
 }
 .nav-cta::after { display: none !important; }
 .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-.hamburger span { display: block; width: 26px; height: 2px; background: var(--ink); transition: .3s; }
+.hamburger span { display: block; width: 26px; height: 2px; background: #fff; transition: .3s; }
 
 /* ─── SECTION BASE ───────────────────────────────────── */
 section { padding: 7rem 5vw; }
@@ -491,9 +491,9 @@ footer p { font-size: .82rem; line-height: 1.7; }
   .hamburger { display: flex; }
   .nav-links {
     display: none; position: absolute; top: 100%; left: 0; right: 0;
-    background: #f5f0e8; flex-direction: column; align-items: center;
+    background: #5c3d24; flex-direction: column; align-items: center;
     padding: 1.5rem; gap: 1.2rem;
-    box-shadow: 0 4px 16px rgba(0,0,0,.1);
+    box-shadow: 0 4px 16px rgba(0,0,0,.2);
   }
   .nav-links.open { display: flex; }
   nav { flex-wrap: wrap; }
