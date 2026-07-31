@@ -242,7 +242,7 @@ section { padding: 7rem 5vw; }
 
 .servicios-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1px;
   margin-top: 3.5rem;
   background: rgba(13,13,13,.08);
@@ -493,6 +493,7 @@ footer p { font-size: .82rem; line-height: 1.7; }
     background: var(--paper); flex-direction: column; align-items: center;
     padding: 1.5rem; gap: 1.2rem;
     box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  .servicios-grid { grid-template-columns: 1fr; }
   }
   .nav-links.open { display: flex; }
   nav { flex-wrap: wrap; }
