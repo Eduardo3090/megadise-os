@@ -7,7 +7,6 @@ const revealObserver = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.15 });
-
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 // ─── NAVBAR SCROLL ──────────────────────────────────
@@ -32,7 +31,6 @@ function enviarCorreo() {
   const email = document.getElementById('inputCorreo').value.trim();
   const acepta = document.getElementById('checkPrivacidad').checked;
   const mensaje = document.getElementById('mensajeModal');
-
   if (!email) {
     alert('Por favor ingresa tu correo.');
     return;
@@ -41,7 +39,6 @@ function enviarCorreo() {
     alert('Debes aceptar la Política de Privacidad para continuar.');
     return;
   }
-
   fetch('/suscribir', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -58,13 +55,3 @@ function enviarCorreo() {
     alert('Hubo un problema al enviar. Intenta de nuevo.');
   });
 }
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.15 });
-
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
