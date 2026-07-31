@@ -3,7 +3,7 @@
 
 :root {
   --ink:   #0d0d0d;
-  --paper: #f5f0e8;
+  --paper: #e7dcc4;
   --gold:  #e8b923;
   --gold2: #f5d16a;
   --gray:  #6b6b6b;
@@ -42,7 +42,7 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 900;
   display: flex; align-items: center; justify-content: space-between;
   padding: 1.1rem 5vw;
-  background: var(--paper);
+  background: #f5f0e8;
   box-shadow: 0 2px 12px rgba(0,0,0,.06);
   transition: box-shadow .4s;
 }
@@ -487,13 +487,13 @@ footer p { font-size: .82rem; line-height: 1.7; }
   .nosotros-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .contacto-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .form-row { grid-template-columns: 1fr; }
+  .servicios-grid { grid-template-columns: 1fr; }
   .hamburger { display: flex; }
   .nav-links {
     display: none; position: absolute; top: 100%; left: 0; right: 0;
-    background: var(--paper); flex-direction: column; align-items: center;
+    background: #f5f0e8; flex-direction: column; align-items: center;
     padding: 1.5rem; gap: 1.2rem;
     box-shadow: 0 4px 16px rgba(0,0,0,.1);
-  .servicios-grid { grid-template-columns: 1fr; }
   }
   .nav-links.open { display: flex; }
   nav { flex-wrap: wrap; }
