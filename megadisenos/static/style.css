@@ -8,6 +8,10 @@
   --gold2: #f5d16a;
   --gray:  #6b6b6b;
   --card:  #ffffff;
+  --teal:   #1E9AA8;
+  --green:  #6FB93C;
+  --purple: #A44FC7;
+  --orange: #E8822E;
   --serif: 'Bebas Neue', sans-serif;
   --body:  'DM Sans', sans-serif;
   --ease:  cubic-bezier(.25,.8,.25,1);
@@ -147,8 +151,9 @@ section { padding: 7rem 5vw; }
   overflow: hidden;
 }
 .hero-bg-line {
-  position: absolute; top: 0; left: 50%; bottom: 0; width: 1px;
-  background: rgba(13,13,13,.08);
+  position: absolute; top: 0; left: 50%; bottom: 0; width: 2px;
+  background: linear-gradient(to bottom, var(--teal), var(--green), var(--gold), var(--orange), var(--purple));
+  opacity: .5;
 }
 .hero-noise {
   position: absolute; inset: 0;
@@ -223,6 +228,10 @@ section { padding: 7rem 5vw; }
   box-shadow: 0 4px 24px rgba(0,0,0,.06);
   transition: transform .3s var(--ease), box-shadow .3s;
 }
+.porque-card:nth-child(1) { border-left-color: var(--teal); }
+.porque-card:nth-child(2) { border-left-color: var(--purple); }
+.porque-card:nth-child(3) { border-left-color: var(--gold); }
+.porque-card:nth-child(4) { border-left-color: var(--orange); }
 .porque-card:hover { transform: translateY(-6px); box-shadow: 0 12px 36px rgba(0,0,0,.12); }
 .porque-card .icon { font-size: 2.2rem; margin-bottom: 1rem; }
 .porque-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
@@ -315,6 +324,10 @@ section { padding: 7rem 5vw; }
   box-shadow: 0 4px 24px rgba(0,0,0,.07);
   transition: transform .3s var(--ease);
 }
+.equipo-card:nth-child(4n+1) { border-top-color: var(--teal); }
+.equipo-card:nth-child(4n+2) { border-top-color: var(--green); }
+.equipo-card:nth-child(4n+3) { border-top-color: var(--purple); }
+.equipo-card:nth-child(4n+4) { border-top-color: var(--orange); }
 .equipo-card:hover { transform: translateY(-5px); }
 .equipo-avatar {
   width: 80px; height: 80px;
@@ -341,12 +354,16 @@ section { padding: 7rem 5vw; }
 .prox-card {
   background: var(--card);
   border: 1px solid rgba(13,13,13,.08);
+  border-top: 4px solid var(--gold);
   box-shadow: 0 4px 18px rgba(0,0,0,.05);
   padding: 2.2rem 1.8rem;
   text-align: center;
   position: relative; overflow: hidden;
   transition: border-color .3s, transform .3s;
 }
+.prox-card:nth-child(1) { border-top-color: var(--teal); }
+.prox-card:nth-child(2) { border-top-color: var(--green); }
+.prox-card:nth-child(3) { border-top-color: var(--purple); }
 .prox-card::after {
   content: '';
   position: absolute; inset: 0;
