@@ -165,7 +165,7 @@ section { padding: 7rem 5vw; }
 .hero-tag {
   display: inline-block;
   font-size: .75rem; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--gold); border: 1px solid var(--gold);
+  color: var(--teal); border: 1px solid var(--teal);
   padding: .3rem .8rem; margin-bottom: 1.5rem;
   animation: fadeUp .7s .1s both;
 }
