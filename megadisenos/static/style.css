@@ -326,7 +326,11 @@ section { padding: 7rem 5vw; }
   border-top: 4px solid var(--gold);
   box-shadow: 0 4px 24px rgba(0,0,0,.07);
   transition: transform .3s var(--ease);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+.equipo-card p { margin-top: auto; padding-top: .5rem; }
 .equipo-card:nth-child(4n+1) { border-top-color: var(--teal); }
 .equipo-card:nth-child(4n+2) { border-top-color: var(--green); }
 .equipo-card:nth-child(4n+3) { border-top-color: var(--purple); }
