@@ -314,8 +314,9 @@ section { padding: 7rem 5vw; }
 
 /* Equipo cards (página nosotros completa) */
 .equipo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1.5rem;
   margin-top: 3.5rem;
 }
@@ -329,6 +330,7 @@ section { padding: 7rem 5vw; }
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex: 0 1 280px;
 }
 .equipo-card p { margin-top: auto; padding-top: .5rem; }
 .equipo-card:nth-child(4n+1) { border-top-color: var(--teal); }
