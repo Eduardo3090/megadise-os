@@ -254,12 +254,14 @@ section { padding: 7rem 5vw; }
   padding: 2.2rem 1.8rem;
   transition: background .3s;
   cursor: default;
+  display: flex;
+  flex-direction: column;
 }
 .servicio-card:hover { background: #f5efe1; }
 .servicio-card .icon { font-size: 2.2rem; margin-bottom: 1rem; }
 .servicio-card h3  { font-size: 1.05rem; font-weight: 700; color: var(--ink); margin-bottom: .5rem; }
 .servicio-card p   { font-size: .82rem; color: var(--gray); margin-bottom: 1rem; }
-.servicio-list { list-style: none; }
+.servicio-list { list-style: none; margin-top: auto; padding-top: .5rem; }
 .servicio-list li {
   font-size: .82rem; color: var(--gray);
   padding: .3rem 0;
