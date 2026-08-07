@@ -100,18 +100,18 @@ def servicios():
     }
     return render_template('servicios.html', servicios=servicios_por_cliente)
 
-@app.route('/tienda')
-def tienda():
-    productos = [
-        {"nombre": "Señaléticas",      "categoria": "Artículos varios", "precio": 35000, "imagen": "https://via.placeholder.com/400x400.png?text=Senaletica"},
-        {"nombre": "Talonario",        "categoria": "Papelería",        "precio": 20000, "imagen": "https://via.placeholder.com/400x400.png?text=Talonario"},
-        {"nombre": "Gigantografía",    "categoria": "Publicidad",       "precio": 42000, "imagen": "https://via.placeholder.com/400x400.png?text=Gigantografia"},
-        {"nombre": "Libros tapa dura", "categoria": "Papelería",        "precio": 35000, "imagen": "https://via.placeholder.com/400x400.png?text=Libro+Tapa+Dura"},
-        {"nombre": "Afiches",          "categoria": "Publicidad",       "precio": 16000, "imagen": "https://via.placeholder.com/400x400.png?text=Afiches"},
-        {"nombre": "Flyer",            "categoria": "Publicidad",       "precio": 12000, "imagen": "https://via.placeholder.com/400x400.png?text=Flyer"},
+@app.route('/portafolio')
+def portafolio():
+    proyectos = [
+        {"nombre": "Gigantografías estatales", "categoria": "Gran Formato",         "imagen": "proyecto-gigantografia-estatal.jpg"},
+        {"nombre": "Empavonados",              "categoria": "Vinilos y Adhesivos",  "imagen": "proyecto-empavonado.jpg"},
+        {"nombre": "Agendas corporativas",     "categoria": "Papelería",            "imagen": "proyecto-agendas.jpg"},
+        {"nombre": "Impresión offset",         "categoria": "Impresión",            "imagen": "imprenta-offset.jpg"},
+        {"nombre": "Impresión digital",        "categoria": "Impresión",            "imagen": "impresion-rodillos.jpg"},
+        {"nombre": "Gran formato",             "categoria": "Gran Formato",         "imagen": "gran-formato.jpg"},
     ]
-    return render_template('tienda.html', productos=productos)
-
+    return render_template('portafolio.html', proyectos=proyectos)
+    
 @app.route('/contactanos', methods=['GET', 'POST'])
 def contactanos():
     if request.method == 'POST':
