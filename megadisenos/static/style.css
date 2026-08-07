@@ -486,6 +486,23 @@ footer {
 footer p { font-size: .82rem; line-height: 1.7; }
 .footer-divider { width: 60px; height: 1px; background: rgba(255,255,255,.15); }
 
+/* ─── PORTAFOLIO ──────────────────────────────────────── */
+.portfolio-hero { background: var(--navbg); }
+.portfolio-hero .section-tag { color: var(--gold); }
+.portfolio-hero h1.portfolio-title {
+  font-family: var(--serif);
+  font-size: clamp(3.2rem, 9vw, 7.5rem);
+  line-height: .9;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+  margin-bottom: .8rem;
+}
+.portfolio-o {
+  height: .78em; width: auto;
+  display: inline-block; vertical-align: middle;
+  margin: 0 -.03em;
+}
+.portfolio-hero p { color: rgba(255,255,255,.55); }
 /* ─── RESPONSIVE ─────────────────────────────────────── */
 @media (max-width: 860px) {
   #hero { grid-template-columns: 1fr; padding-top: 7rem; text-align: center; }
