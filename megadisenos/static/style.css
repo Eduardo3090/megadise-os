@@ -379,7 +379,12 @@ section { padding: 7rem 5vw; }
   background: radial-gradient(circle at 50% 0%, rgba(232,185,35,.08), transparent 70%);
   opacity: 0; transition: opacity .3s;
 }
-.prox-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+.prox-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px) scale(1.06);
+  box-shadow: 0 16px 40px rgba(0,0,0,.18);
+  z-index: 5;
+}
 .prox-card:hover::after { opacity: 1; }
 .prox-card .icon { font-size: 2.4rem; margin-bottom: 1rem; display: block; }
 .prox-card h3 { font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: .5rem; }
