@@ -505,7 +505,7 @@ footer p { font-size: .82rem; line-height: 1.7; }
 .portfolio-o {
   height: .78em; width: auto;
   display: inline-block; vertical-align: middle;
-  margin: 0 -.32em;
+  margin: 0 -.42em;
 }
 .portfolio-hero p { color: rgba(255,255,255,.55); }
 /* ─── RESPONSIVE ─────────────────────────────────────── */
