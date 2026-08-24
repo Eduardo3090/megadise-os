@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block titulo %}Contáctanos | Imprenta en Copiapó | Megadiseños{% endblock %}
+{% block content %}
+<!-- PAGE HERO -->
+<div class="page-hero contacto-page">
+  <div class="page-hero-inner">
+    <span class="section-tag">Hablemos</span>
+    <h1>Contáctanos</h1>
+    <p>Escríbenos y te respondemos a la brevedad. Estamos listos para hacer realidad tu proyecto.</p>
+  </div>
+</div>
+<!-- FORMULARIO + INFO -->
+<section class="contacto-page">
+  <div class="contacto-grid">
+    <!-- INFO -->
+    <div class="contacto-info reveal">
+      <h3>Información de contacto</h3>
+      <div class="info-item">
+        <div class="iicon">📞</div>
+        <div class="itext">
+          <strong>Teléfono</strong>
+          <p>+56 9 4862 3875</p>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="iicon">✉️</div>
+        <div class="itext">
+          <strong>Correo</strong>
+          <p>ventasmegadisenos@gmail.com</p>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="iicon">📍</div>
+        <div class="itext">
+          <strong>Ubicación</strong>
+          <p>Copiapó, Atacama, Chile</p>
+        </div>
+      </div>
+    </div>
+    <!-- FORMULARIO -->
+    <div class="form-card reveal">
+      <form action="https://formsubmit.co/ventasmegadisenos@gmail.com" method="POST">
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_template" value="table" />
+        <input type="hidden" name="_subject" value="Nuevo mensaje desde Megadiseños" />
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" name="nombre" placeholder="Tu nombre" required />
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="text" name="telefono" placeholder="+56 9 XXXX XXXX" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Correo electrónico</label>
+          <input type="email" name="email" placeholder="tucorreo@ejemplo.com" required />
+        </div>
+        <div class="form-group">
+          <label>Mensaje</label>
+          <textarea name="mensaje" placeholder="¿En qué podemos ayudarte?" required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Enviar mensaje →</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titulo %}Servicios de Impresión y Diseño Gráfico en Copiapó | Megadiseños{% endblock %}
+{% block meta_description %}Pendones, vinilos, gigantografías, papelería corporativa, sellos personalizados y diseño gráfico en Copiapó, Región de Atacama.{% endblock %}
+
+{% block content %}
+
+<div class="page-hero servicios-page">
+  <div class="page-hero-inner">
+    <span class="section-tag">Catálogo completo</span>
+    <h1>Nuestros<br>Servicios</h1>
+    <p>Todo lo que necesitas para tu marca en un solo lugar. Calidad y creatividad en cada producto.</p>
+  </div>
+</div>
+
+<!-- SERVICIOS GRID -->
+<section class="servicios-page">
+  <div class="servicios-grid reveal">
+    {% for categoria, datos in servicios.items() %}
+    <div class="servicio-card">
+      <div class="icon">{{ datos.icono }}</div>
+      <h3>{{ categoria }}</h3>
+      <p>{{ datos.descripcion }}</p>
+      <ul class="servicio-list">
+        {% for servicio in datos.servicios %}
+        <li>{{ servicio }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="background:var(--paper); text-align:center; padding:6rem 5vw;">
+  <span class="section-tag reveal">¿No encuentras lo que buscas?</span>
+  <h2 class="section-title reveal">Cuéntanos tu idea</h2>
+  <p class="section-sub reveal" style="margin:0 auto 2.5rem;">Podemos crear soluciones a medida para proyectos especiales. ¡Contáctanos!</p>
+  <a href="/contactanos" class="btn-primary reveal">Solicitar cotización →</a>
+</section>
+
+{% endblock %}

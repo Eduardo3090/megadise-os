@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block titulo %}Portafolio | Diseño Gráfico e Impresión en Copiapó | Megadiseños{% endblock %}
+{% block meta_description %}Conoce nuestro portafolio: gigantografías, papelería corporativa, gran formato y diseño gráfico para empresas de Copiapó y la Región de Atacama.{% endblock %}
+{% block content %}
+<!-- PAGE HERO -->
+<div class="page-hero portfolio-hero">
+  <div class="page-hero-inner">
+    <span class="section-tag">Diseño gráfico & impresión</span>
+    <h1 class="portfolio-title">
+      Portaf<img src="{{ url_for('static', filename='logotipo.png') }}" alt="o" class="portfolio-o">lio
+    </h1>
+    <p>Una muestra de nuestro trabajo real para empresas de Copiapó y la Región de Atacama.</p>
+  </div>
+</div>
+
+<!-- PROYECTOS -->
+<section style="background: var(--paper);">
+  <span class="section-tag reveal" style="color: var(--teal);">Nuestro trabajo</span>
+  <h2 class="section-title reveal">Proyectos destacados</h2>
+  <p class="section-sub reveal">Una selección de piezas gráficas y trabajos de impresión para clientes reales.</p>
+
+  <div class="prox-grid" style="margin-top:3.5rem;">
+    {% for proyecto in proyectos %}
+    <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
+      <img loading="lazy" src="{{ url_for('static', filename=proyecto.imagen) }}" alt="{{ proyecto.nombre }}" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <div style="padding:1.5rem;">
+        <span class="badge badge-gold" style="margin-bottom:.6rem;">{{ proyecto.categoria }}</span>
+        <h3>{{ proyecto.nombre }}</h3>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="background:var(--gold); padding:5rem 5vw; text-align:center;">
+  <h2 class="section-title reveal" style="color:var(--ink);">¿Quieres ver tu proyecto aquí?</h2>
+  <p class="reveal" style="color:rgba(0,0,0,.6); margin-bottom:2rem; max-width:40ch; margin-left:auto; margin-right:auto;">Cuéntanos tu idea y la convertimos en una pieza gráfica de alto impacto.</p>
+  <a href="/contactanos" class="reveal" style="background:var(--ink);color:#fff;padding:.9rem 2.2rem;text-decoration:none;font-weight:700;letter-spacing:.06em;display:inline-block;transition:opacity .2s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+    Contáctanos →
+  </a>
+</section>
+{% endblock %}

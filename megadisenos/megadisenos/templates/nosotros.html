@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block titulo %}Sobre Nosotros | Imprenta en Copiapó | Megadiseños{% endblock %}
+{% block content %}
+<!-- PAGE HERO -->
+<div class="page-hero nosotros-page">
+  <div class="page-hero-inner">
+    <span class="section-tag">Quiénes somos</span>
+    <h1>El equipo detrás<br>de Megadiseños</h1>
+    <p>En MegaDiseños convertimos tus ideas en soluciones gráficas de alto impacto. Somos una imprenta en Copiapó especializada en impresión digital publicitaria, plotter de corte y diseño gráfico, que garantiza la más alta calidad, rapidez y estilo para tu imagen corporativa en toda la Región de Atacama.</p>
+  </div>
+</div>
+<!-- EQUIPO -->
+<section class="nosotros-page">
+  <span class="section-tag reveal">Nuestro equipo</span>
+  <h2 class="section-title reveal">Las personas detrás<br>de cada proyecto</h2>
+  <div class="equipo-grid">
+    {% for persona in equipo %}
+    <div class="equipo-card reveal">
+      <div class="equipo-avatar">
+        <i class="fa {{ persona.icono }}" style="color:var(--gold);"></i>
+      </div>
+      <h3>{{ persona.nombre }}</h3>
+      <p class="role">{{ persona.cargo }}</p>
+      {% if persona.descripcion %}
+        <p>{{ persona.descripcion }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+<!-- STATS -->
+<section style="background:var(--paper); padding:6rem 5vw; text-align:center;">
+  <span class="section-tag reveal" style="color: var(--green);">Nuestros números</span>
+  <h2 class="section-title reveal">Resultados que<br>hablan por sí solos</h2>
+  <div class="stats-grid reveal" style="margin:3rem auto 0; max-width:800px;">
+    <div class="stat-card">
+      <span class="stat-num">{{ proyecciones.clientes_satisfechos }}%</span>
+      <span class="stat-label">Clientes satisfechos</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ proyecciones.trabajos_entregados }}%</span>
+      <span class="stat-label">Trabajos entregados a tiempo</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ proyecciones.años_experiencia }}</span>
+      <span class="stat-label">Años de experiencia</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ proyecciones.proyectos_por_mes }}+</span>
+      <span class="stat-label">Proyectos por mes</span>
+    </div>
+  </div>
+</section>
+<!-- VALORES -->
+<section class="nosotros-page">
+  <span class="section-tag reveal">Lo que nos mueve</span>
+  <h2 class="section-title reveal">Nuestros valores</h2>
+  <div class="porque-grid" style="margin-top:3rem;">
+    <div class="porque-card reveal">
+      <div class="icon">🎯</div>
+      <h3>Compromiso</h3>
+      <p>Cada proyecto lo tratamos con la misma dedicación, sin importar su tamaño. Tu marca merece lo mejor.</p>
+    </div>
+    <div class="porque-card reveal">
+      <div class="icon">💡</div>
+      <h3>Creatividad</h3>
+      <p>Buscamos soluciones visuales únicas que comuniquen la esencia de tu negocio de forma memorable.</p>
+    </div>
+    <div class="porque-card reveal">
+      <div class="icon">🤝</div>
+      <h3>Confianza</h3>
+      <p>Construimos relaciones de largo plazo con nuestros clientes, basadas en la transparencia y el respeto mutuo.</p>
+    </div>
+  </div>
+</section>
+<!-- CTA -->
+<section style="background:var(--gold); padding:5rem 5vw; text-align:center;">
+  <h2 class="section-title reveal" style="color:var(--ink);">¿Trabajamos juntos?</h2>
+  <p class="reveal" style="color:rgba(0,0,0,.6); margin-bottom:2rem; max-width:40ch; margin-left:auto; margin-right:auto;">Cuéntanos tu proyecto y te respondemos con una propuesta a medida.</p>
+  <a href="/contactanos" class="reveal" style="background:var(--ink);color:#fff;padding:.9rem 2.2rem;text-decoration:none;font-weight:700;letter-spacing:.06em;display:inline-block;transition:opacity .2s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+    Contáctanos →
+  </a>
+</section>
+{% endblock %}
