@@ -69,3 +69,15 @@ function enviarCorreo() {
     alert('Hubo un problema al enviar. Intenta de nuevo.');
   });
 }
+
+// ─── COPIAR DATOS DE PAGO ────────────────────────────
+function copiarDato(id, btn) {
+  const texto = document.getElementById(id).textContent.trim();
+  const original = btn.textContent;
+  navigator.clipboard.writeText(texto).then(() => {
+    btn.textContent = '¡Copiado!';
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  }).catch(() => {
+    alert('No se pudo copiar automáticamente. Este es el dato: ' + texto);
+  });
+}
