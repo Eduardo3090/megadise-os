@@ -66,4 +66,54 @@
     </div>
   </div>
 </section>
+
+<!-- MÉTODOS DE PAGO -->
+<section class="contacto-page" style="padding-top:0;">
+  <div class="reveal" style="max-width:640px; margin:0 auto; background:var(--card); border-top:4px solid var(--gold); padding:2.5rem;">
+    <h3 style="font-family:var(--serif); font-size:1.6rem; margin-bottom:.5rem; text-align:center;">Métodos de pago</h3>
+    <p style="color:var(--gray); font-size:.9rem; margin-bottom:2rem; text-align:center;">Una vez aceptada tu cotización, puedes transferir directamente a:</p>
+
+    <div style="display:grid; gap:1rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e0d9cf; padding-bottom:.7rem;">
+        <div>
+          <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">Banco</strong>
+          <span id="dato-banco">Santander</span>
+        </div>
+        <button type="button" onclick="copiarDato('dato-banco', this)" style="background:none; border:1px solid var(--gold); color:var(--ink); border-radius:6px; padding:.35rem .8rem; font-size:.75rem; cursor:pointer; flex-shrink:0;">Copiar</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e0d9cf; padding-bottom:.7rem;">
+        <div>
+          <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">Cuenta Corriente</strong>
+          <span id="dato-cuenta">71674452</span>
+        </div>
+        <button type="button" onclick="copiarDato('dato-cuenta', this)" style="background:none; border:1px solid var(--gold); color:var(--ink); border-radius:6px; padding:.35rem .8rem; font-size:.75rem; cursor:pointer; flex-shrink:0;">Copiar</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e0d9cf; padding-bottom:.7rem;">
+        <div>
+          <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">RUT</strong>
+          <span id="dato-rut">76.724.923-3</span>
+        </div>
+        <button type="button" onclick="copiarDato('dato-rut', this)" style="background:none; border:1px solid var(--gold); color:var(--ink); border-radius:6px; padding:.35rem .8rem; font-size:.75rem; cursor:pointer; flex-shrink:0;">Copiar</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e0d9cf; padding-bottom:.7rem;">
+        <div>
+          <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">Titular</strong>
+          <span id="dato-titular">Sociedad Megadiseños Spa.</span>
+        </div>
+        <button type="button" onclick="copiarDato('dato-titular', this)" style="background:none; border:1px solid var(--gold); color:var(--ink); border-radius:6px; padding:.35rem .8rem; font-size:.75rem; cursor:pointer; flex-shrink:0;">Copiar</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">Correo de aviso</strong>
+          <span id="dato-mail">ventasmegadisenos@gmail.com</span>
+        </div>
+        <button type="button" onclick="copiarDato('dato-mail', this)" style="background:none; border:1px solid var(--gold); color:var(--ink); border-radius:6px; padding:.35rem .8rem; font-size:.75rem; cursor:pointer; flex-shrink:0;">Copiar</button>
+      </div>
+    </div>
+
+    <p style="color:var(--gray); font-size:.82rem; margin-top:1.8rem; text-align:center;">
+      Envía tu comprobante de transferencia a <strong>ventasmegadisenos@gmail.com</strong> para agilizar tu pedido.
+    </p>
+  </div>
+</section>
 {% endblock %}
