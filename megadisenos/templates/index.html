@@ -24,28 +24,40 @@
   <div class="hero-right">
     <div class="hero-card">
       <div class="icon" style="width:100%; aspect-ratio:1/1; overflow:hidden; margin-bottom:.7rem;">
-        <img src="{{ url_for('static', filename='imprenta-offset.jpg') }}" alt="Diseño gráfico profesional en Copiapó" style="width:100%; height:100%; object-fit:cover; display:block;">
+        <picture style="display:block; width:100%; height:100%;">
+          <source srcset="{{ url_for('static', filename='imprenta-offset.webp') }}" type="image/webp">
+          <img src="{{ url_for('static', filename='imprenta-offset.jpg') }}" alt="Diseño gráfico profesional en Copiapó" style="width:100%; height:100%; object-fit:cover; display:block;">
+        </picture>
       </div>
       <h3>Diseño Gráfico</h3>
       <p>Logos, branding y artes para impresión</p>
     </div>
     <div class="hero-card">
       <div class="icon" style="width:100%; aspect-ratio:1/1; overflow:hidden; margin-bottom:.7rem;">
-        <img src="{{ url_for('static', filename='impresion-rodillos.jpg') }}" alt="Impresión digital y offset en Copiapó" style="width:100%; height:100%; object-fit:cover; display:block;">
+        <picture style="display:block; width:100%; height:100%;">
+          <source srcset="{{ url_for('static', filename='impresion-rodillos.webp') }}" type="image/webp">
+          <img src="{{ url_for('static', filename='impresion-rodillos.jpg') }}" alt="Impresión digital y offset en Copiapó" style="width:100%; height:100%; object-fit:cover; display:block;">
+        </picture>
       </div>
       <h3>Impresión</h3>
       <p>Digital y offset con calidad premium</p>
     </div>
     <div class="hero-card">
       <div class="icon" style="width:100%; aspect-ratio:1/1; overflow:hidden; margin-bottom:.7rem;">
-        <img src="{{ url_for('static', filename='gran-formato.jpg') }}" alt="Gigantografías y gran formato en Copiapó, Atacama" style="width:100%; height:100%; object-fit:cover; display:block;">
+        <picture style="display:block; width:100%; height:100%;">
+          <source srcset="{{ url_for('static', filename='gran-formato.webp') }}" type="image/webp">
+          <img src="{{ url_for('static', filename='gran-formato.jpg') }}" alt="Gigantografías y gran formato en Copiapó, Atacama" style="width:100%; height:100%; object-fit:cover; display:block;">
+        </picture>
       </div>
       <h3>Gran Formato</h3>
       <p>Lonas, pendones y vinilos de gran impacto</p>
     </div>
     <div class="hero-card">
       <div class="icon" style="width:100%; aspect-ratio:1/1; overflow:hidden; margin-bottom:.7rem;">
-        <img src="{{ url_for('static', filename='lamicoide.jpg') }}" alt="Artículos promocionales personalizados en Copiapó" style="width:100%; height:100%; object-fit:cover; display:block;">
+        <picture style="display:block; width:100%; height:100%;">
+          <source srcset="{{ url_for('static', filename='lamicoide.webp') }}" type="image/webp">
+          <img src="{{ url_for('static', filename='lamicoide.jpg') }}" alt="Artículos promocionales personalizados en Copiapó" style="width:100%; height:100%; object-fit:cover; display:block;">
+        </picture>
       </div>
       <h3>Artículos Promo</h3>
       <p>Merchandising y objetos personalizados</p>
@@ -120,19 +132,28 @@
   <h2 class="section-title reveal">Proyectos destacados</h2>
   <div class="prox-grid">
     <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
-      <img loading="lazy" src="{{ url_for('static', filename='proyecto-gigantografia-estatal.jpg') }}" alt="Gigantografías estatales" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <picture>
+        <source srcset="{{ url_for('static', filename='proyecto-gigantografia-estatal.webp') }}" type="image/webp">
+        <img loading="lazy" src="{{ url_for('static', filename='proyecto-gigantografia-estatal.jpg') }}" alt="Gigantografías estatales" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      </picture>
       <div style="padding:1.5rem;">
         <h3>Gigantografías estatales</h3>
       </div>
     </div>
     <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
-      <img loading="lazy" src="{{ url_for('static', filename='proyecto-empavonado.jpg') }}" alt="Empavonados" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <picture>
+        <source srcset="{{ url_for('static', filename='proyecto-empavonado.webp') }}" type="image/webp">
+        <img loading="lazy" src="{{ url_for('static', filename='proyecto-empavonado.jpg') }}" alt="Empavonados" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      </picture>
       <div style="padding:1.5rem;">
         <h3>Empavonados</h3>
       </div>
     </div>
     <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
-      <img loading="lazy" src="{{ url_for('static', filename='proyecto-agendas.jpg') }}" alt="Agendas Corporativas" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <picture>
+        <source srcset="{{ url_for('static', filename='proyecto-agendas.webp') }}" type="image/webp">
+        <img loading="lazy" src="{{ url_for('static', filename='proyecto-agendas.jpg') }}" alt="Agendas Corporativas" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      </picture>
       <div style="padding:1.5rem;">
         <h3>Agendas Corporativas</h3>
       </div>
@@ -166,12 +187,15 @@
 <section id="acompanamiento" class="acompanamiento-section" style="background: var(--paper); padding-top: 7rem; padding-bottom: 7rem;">
   <div class="acompanamiento-grid" style="display:grid; grid-template-columns:1fr 1.4fr; gap:4rem; align-items:center;">
     <div class="reveal" style="text-align:center;">
-      <img
-        loading="lazy"
-        src="{{ url_for('static', filename='logotipo.png') }}"
-        alt="Megadiseños"
-        style="max-width: 100%; width: 100%; height: auto;"
-      >
+      <picture>
+        <source srcset="{{ url_for('static', filename='logotipo.webp') }}" type="image/webp">
+        <img
+          loading="lazy"
+          src="{{ url_for('static', filename='logotipo.png') }}"
+          alt="Megadiseños"
+          style="max-width: 100%; width: 100%; height: auto;"
+        >
+      </picture>
     </div>
     <div class="reveal">
       <span class="section-tag">Acompañamiento real</span>
