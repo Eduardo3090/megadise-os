@@ -7,7 +7,7 @@
     <meta name="description" content="{% block meta_description %}Imprenta en Copiapó especializada en impresión digital, plotter de corte, gigantografías y diseño gráfico para empresas de la Región de Atacama. Cotiza online.{% endblock %}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -15,11 +15,14 @@
 
     <nav id="mainNav">
         <a href="/" class="nav-logo">
-            <img
-                src="{{ url_for('static', filename='logo megadisenos.png') }}"
-                alt="Megadiseños"
-                style="height: 70px; object-fit: contain; display: block;"
-            >
+            <picture>
+                <source srcset="{{ url_for('static', filename='logo megadisenos.webp') }}" type="image/webp">
+                <img
+                    src="{{ url_for('static', filename='logo megadisenos.png') }}"
+                    alt="Megadiseños"
+                    style="height: 70px; object-fit: contain; display: block;"
+                >
+            </picture>
         </a>
         <ul class="nav-links" id="navLinks">
             <li><a href="/">Inicio</a></li>
@@ -38,11 +41,14 @@
     </main>
 
     <footer>
-        <img
-            src="{{ url_for('static', filename='logo megadisenos.png') }}"
-            alt="Megadiseños"
-            style="height: 60px; object-fit: contain;"
-        >
+        <picture>
+            <source srcset="{{ url_for('static', filename='logo megadisenos.webp') }}" type="image/webp">
+            <img
+                src="{{ url_for('static', filename='logo megadisenos.png') }}"
+                alt="Megadiseños"
+                style="height: 60px; object-fit: contain;"
+            >
+        </picture>
         <p>
             <a href="https://wa.me/56948623875" target="_blank" style="color: var(--gold2); text-decoration: none;">
                 📞 +56 9 4862 3875
