@@ -22,7 +22,10 @@
   <div class="prox-grid" style="margin-top:3.5rem;">
     {% for proyecto in proyectos %}
     <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
-      <img src="{{ url_for('static', filename=proyecto.imagen) }}" alt="{{ proyecto.nombre }}" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <picture>
+        <source srcset="{{ url_for('static', filename=proyecto.imagen.replace('.jpg', '.webp')) }}" type="image/webp">
+        <img loading="lazy" src="{{ url_for('static', filename=proyecto.imagen) }}" alt="{{ proyecto.nombre }}" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      </picture>
       <div style="padding:1.5rem;">
         <span class="badge badge-gold" style="margin-bottom:.6rem;">{{ proyecto.categoria }}</span>
         <h3>{{ proyecto.nombre }}</h3>
