@@ -72,14 +72,14 @@
       <h3>Señaléticas</h3>
       <p style="margin-bottom:1rem;">Identifica y orienta dentro de tu empresa</p>
       <span class="role" style="display:block; font-size:1.1rem; margin-bottom:1rem;">$35.000 CLP</span>
-      <a href="/tienda" class="btn-primary" style="padding:.6rem 1.4rem; font-size:.85rem;">Ver en tienda</a>
+      <a href="/contactanos" class="btn-primary" style="padding:.6rem 1.4rem; font-size:.85rem;">Cotizar ahora</a>
     </div>
     <div class="equipo-card reveal">
       <div class="equipo-avatar">🧾</div>
       <h3>Talonario</h3>
       <p style="margin-bottom:1rem;">Papelería profesional para tu día a día</p>
       <span class="role" style="display:block; font-size:1.1rem; margin-bottom:1rem;">$20.000 CLP</span>
-      <a href="/tienda" class="btn-primary" style="padding:.6rem 1.4rem; font-size:.85rem;">Ver en tienda</a>
+      <a href="/contactanos" class="btn-primary" style="padding:.6rem 1.4rem; font-size:.85rem;">Cotizar ahora</a>
     </div>
   </div>
 </section>
@@ -120,19 +120,19 @@
   <h2 class="section-title reveal">Proyectos destacados</h2>
   <div class="prox-grid">
     <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
-      <img src="{{ url_for('static', filename='proyecto-gigantografia-estatal.jpg') }}" alt="Gigantografías estatales" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <img loading="lazy" src="{{ url_for('static', filename='proyecto-gigantografia-estatal.jpg') }}" alt="Gigantografías estatales" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
       <div style="padding:1.5rem;">
         <h3>Gigantografías estatales</h3>
       </div>
     </div>
     <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
-      <img src="{{ url_for('static', filename='proyecto-empavonado.jpg') }}" alt="Empavonados" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <img loading="lazy" src="{{ url_for('static', filename='proyecto-empavonado.jpg') }}" alt="Empavonados" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
       <div style="padding:1.5rem;">
         <h3>Empavonados</h3>
       </div>
     </div>
     <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
-      <img src="{{ url_for('static', filename='proyecto-agendas.jpg') }}" alt="Agendas Corporativas" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      <img loading="lazy" src="{{ url_for('static', filename='proyecto-agendas.jpg') }}" alt="Agendas Corporativas" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
       <div style="padding:1.5rem;">
         <h3>Agendas Corporativas</h3>
       </div>
@@ -167,6 +167,7 @@
   <div class="acompanamiento-grid" style="display:grid; grid-template-columns:1fr 1.4fr; gap:4rem; align-items:center;">
     <div class="reveal" style="text-align:center;">
       <img
+        loading="lazy"
         src="{{ url_for('static', filename='logotipo.png') }}"
         alt="Megadiseños"
         style="max-width: 100%; width: 100%; height: auto;"
