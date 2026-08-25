@@ -31,8 +31,14 @@ function enviarCorreo() {
   const email = document.getElementById('inputCorreo').value.trim();
   const acepta = document.getElementById('checkPrivacidad').checked;
   const mensaje = document.getElementById('mensajeModal');
+  const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
   if (!email) {
     alert('Por favor ingresa tu correo.');
+    return;
+  }
+  if (!emailRegex.test(email)) {
+    alert('Por favor ingresa un correo válido.');
     return;
   }
   if (!acepta) {
@@ -46,9 +52,17 @@ function enviarCorreo() {
   })
   .then(res => res.json())
   .then(data => {
-    mensaje.style.display = 'block';
-    document.getElementById('inputCorreo').value = '';
-    document.getElementById('checkPrivacidad').checked = false;
+    if (data.exito) {
+      mensaje.textContent = '✅ ¡Listo! Revisa tu correo pronto.';
+      mensaje.style.color = '#2a8f4d';
+      mensaje.style.display = 'block';
+      document.getElementById('inputCorreo').value = '';
+      document.getElementById('checkPrivacidad').checked = false;
+    } else {
+      mensaje.textContent = '⚠️ ' + (data.mensaje || 'No se pudo procesar tu solicitud.');
+      mensaje.style.color = '#c0392b';
+      mensaje.style.display = 'block';
+    }
   })
   .catch(err => {
     console.error(err);
