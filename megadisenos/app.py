@@ -4,9 +4,17 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import sqlite3
 import os
+import re
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()  # Carga variables desde un archivo .env en desarrollo local
 
 app = Flask(__name__)
+
+# Validación simple de formato de correo (evita datos basura y
+# ayuda a prevenir inyección de encabezados en el correo saliente)
+EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 # ── BASE DE DATOS ──────────────────────────────────────
 def init_db():
@@ -124,12 +132,15 @@ def privacidad():
 
 @app.route('/suscribir', methods=['POST'])
 def suscribir():
-    data = request.get_json()
-    correo_cliente = data.get('email')
+    data = request.get_json(silent=True) or {}
+    correo_cliente = (data.get('email') or '').strip()
     consentimiento = data.get('consentimiento', False)
 
     if not correo_cliente:
         return jsonify({"exito": False, "mensaje": "Correo no recibido"})
+
+    if not EMAIL_REGEX.match(correo_cliente):
+        return jsonify({"exito": False, "mensaje": "El correo ingresado no es válido"})
 
     if not consentimiento:
         return jsonify({"exito": False, "mensaje": "Debes aceptar la política de privacidad"})
@@ -137,8 +148,14 @@ def suscribir():
     ip = request.remote_addr
     guardar_email(correo_cliente, ip)
 
-    CORREO_EMPRESA = "ventasmegadisenos@gmail.com"
-    CONTRASENA = "TU_CONTRASENA_DE_APP"
+    CORREO_EMPRESA = os.getenv("CORREO_EMPRESA", "ventasmegadisenos@gmail.com")
+    CONTRASENA = os.getenv("CONTRASENA_APP")
+
+    if not CONTRASENA:
+        return jsonify({
+            "exito": True,
+            "mensaje": "Correo guardado. El envío automático no está configurado (falta CONTRASENA_APP)."
+        })
 
     asunto = "¿Podemos ayudarte con tu próximo proyecto?"
     cuerpo = f"""
@@ -185,9 +202,9 @@ def suscribir():
 
 @app.route('/eliminar-datos', methods=['POST'])
 def eliminar_datos():
-    data = request.get_json()
-    email = data.get('email')
-    if not email:
+    data = request.get_json(silent=True) or {}
+    email = (data.get('email') or '').strip()
+    if not email or not EMAIL_REGEX.match(email):
         return jsonify({"exito": False})
     try:
         conn = sqlite3.connect('suscriptores.db')
@@ -204,4 +221,5 @@ def funciones_futuras():
     return render_template('funciones_futuras.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug_mode = os.getenv("FLASK_DEBUG", "false").lower() == "true"
+    app.run(debug=debug_mode)
