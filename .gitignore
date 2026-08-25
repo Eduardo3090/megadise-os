@@ -1,1 +1,14 @@
-.vs/ 
+.vs/
+
+# Entorno / credenciales
+.env
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Base de datos local (contiene emails/IPs de clientes, no debe subirse)
+*.db
+megadisenos/suscriptores.db
