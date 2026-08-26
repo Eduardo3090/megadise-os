@@ -11,9 +11,9 @@ import os
 import time
 import re
 from PIL import Image, ImageOps
+import rutas
 
-AQUI = os.path.dirname(os.path.abspath(__file__))
-CARPETA_UPLOADS = os.path.join(AQUI, 'static', 'uploads')
+CARPETA_UPLOADS = rutas.CARPETA_MEDIA
 ANCHO_MAXIMO = 1600
 CALIDAD_JPG = 82
 CALIDAD_WEBP = 78
@@ -35,12 +35,10 @@ def _slug(texto):
 def guardar_imagen_optimizada(archivo_subido, nombre_referencia="seccion"):
     """
     Recibe un archivo subido (Flask FileStorage), lo optimiza y guarda
-    como uploads/<slug>-<timestamp>.jpg y .webp.
-    Devuelve el 'nombre base' (sin carpeta ni extensión) para guardar
-    en la base de datos, ej: 'uploads/hero-1-1699999999'
+    como <disco>/uploads/<slug>-<timestamp>.jpg y .webp.
+    Devuelve el 'nombre base' que se guarda en la base de datos y que
+    luego se resuelve con la función url_imagen(), ej: 'media/hero-1-1699999999'
     """
-    os.makedirs(CARPETA_UPLOADS, exist_ok=True)
-
     base = f"{_slug(nombre_referencia)}-{int(time.time())}"
     ruta_jpg = os.path.join(CARPETA_UPLOADS, base + '.jpg')
     ruta_webp = os.path.join(CARPETA_UPLOADS, base + '.webp')
@@ -61,4 +59,4 @@ def guardar_imagen_optimizada(archivo_subido, nombre_referencia="seccion"):
     imagen.save(ruta_jpg, "JPEG", quality=CALIDAD_JPG, optimize=True)
     imagen.save(ruta_webp, "WEBP", quality=CALIDAD_WEBP)
 
-    return f"uploads/{base}"
+    return f"media/{base}"

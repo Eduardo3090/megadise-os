@@ -1,0 +1,27 @@
+{% extends "admin/base_admin.html" %}
+{% block titulo %}Crear acceso{% endblock %}
+{% block contenido %}
+<div class="admin-center-box">
+    <div class="admin-card admin-login-card">
+        <img src="{{ url_for('static', filename='logo megadisenos.png') }}" alt="Megadiseños" class="admin-login-logo">
+        <h1>Bienvenido 👋</h1>
+        <p class="admin-subtext">
+            Es la primera vez que se abre el panel de edición. Crea tu usuario y contraseña
+            para poder editar los textos e imágenes del sitio cuando quieras.
+        </p>
+        <form method="POST" action="{{ url_for('admin_configurar') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label for="usuario">Elige un usuario</label>
+            <input type="text" id="usuario" name="usuario" required autocomplete="username" autofocus placeholder="ej: megadisenos">
+
+            <label for="password">Elige una contraseña</label>
+            <input type="password" id="password" name="password" required autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres">
+
+            <label for="password2">Repite la contraseña</label>
+            <input type="password" id="password2" name="password2" required autocomplete="new-password" minlength="8">
+
+            <button type="submit" class="admin-btn admin-btn-primary admin-btn-full">Crear acceso</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

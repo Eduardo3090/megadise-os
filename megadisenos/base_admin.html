@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Panel de edición{% endblock %} · Megadiseños</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body>
+{% if session.get('admin_id') %}
+<header class="admin-topbar">
+    <a href="{{ url_for('admin_dashboard') }}" class="admin-logo">Megadiseños <span>· Editor</span></a>
+    <nav class="admin-topnav">
+        <a href="/" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver sitio</a>
+        <a href="{{ url_for('admin_logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+    </nav>
+</header>
+{% endif %}
+
+<main class="admin-main">
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% if mensajes %}
+            <div class="admin-flashes">
+            {% for categoria, mensaje in mensajes %}
+                <div class="admin-flash admin-flash-{{ categoria }}">{{ mensaje }}</div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block contenido %}{% endblock %}
+</main>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% set d = s.datos %}
+<section id="resenas" style="background: var(--paper);">
+  <span class="section-tag reveal" style="color: var(--teal);">{{ d.etiqueta }}</span>
+  <h2 class="section-title reveal">{{ d.titulo }}</h2>
+  <p class="section-sub reveal">
+    <i class="fa fa-star" style="color:#f5b301;"></i><i class="fa fa-star" style="color:#f5b301;"></i><i class="fa fa-star" style="color:#f5b301;"></i><i class="fa fa-star" style="color:#f5b301;"></i><i class="fa-solid fa-star-half-stroke" style="color:#f5b301;"></i>
+    &nbsp;{{ d.resumen }}
+  </p>
+
+  <div class="equipo-grid" style="margin-top:3.5rem;">
+    {% for r in d.resenas %}
+    <div class="equipo-card reveal">
+      <div style="color:#f5b301; font-size:1.1rem; margin-bottom:.6rem;">
+        {% for _ in range(r.estrellas) %}<i class="fa fa-star"></i>{% endfor %}
+      </div>
+      <p style="font-style:italic; margin-bottom:1rem;">"{{ r.texto }}"</p>
+      <span class="role" style="display:block; font-size:.9rem;">{{ r.autor }}</span>
+    </div>
+    {% endfor %}
+    <div class="equipo-card reveal" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <i class="fa-brands fa-google" style="font-size:2.2rem; margin-bottom:1rem; color: var(--gold);"></i>
+      <p style="margin-bottom:1.2rem;">¿Ya trabajaste con nosotros?</p>
+      <a href="https://www.google.com/search?q=megadise%C3%B1os#lrd=0x969803ede64dc14d:0x92c8f94fb00ff5c3,3,,,,," target="_blank" class="btn-primary" style="padding:.6rem 1.4rem; font-size:.85rem;">Déjanos tu opinión</a>
+    </div>
+  </div>
+
+  <div class="reveal" style="display:flex; flex-wrap:wrap; justify-content:center; gap:1.2rem; margin-top:2.5rem;">
+    <span style="background:var(--card); padding:.5rem 1.1rem; border-radius:50px; font-size:.85rem;">
+      Nelson Tabares <span style="color:#f5b301;">★★★★★</span>
+    </span>
+    <span style="background:var(--card); padding:.5rem 1.1rem; border-radius:50px; font-size:.85rem;">
+      Harold Sanchez Restrepo <span style="color:#f5b301;">★★★★</span><span style="color:#ccc;">★</span>
+    </span>
+    <span style="background:var(--card); padding:.5rem 1.1rem; border-radius:50px; font-size:.85rem;">
+      Maria Gabriela Espinoza Segarra <span style="color:#f5b301;">★★★★★</span>
+    </span>
+  </div>
+</section>

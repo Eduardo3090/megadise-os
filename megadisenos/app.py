@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, abort
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, abort, send_from_directory
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -10,6 +10,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import rutas
 import content_store
 import image_tools
 from admin_auth import login_required, generar_csrf_token, validar_csrf
@@ -19,17 +20,17 @@ load_dotenv()  # Carga variables desde un archivo .env en desarrollo local
 app = Flask(__name__)
 
 # La SECRET_KEY firma la cookie de sesión del panel /admin.
-# Si no se define en el .env, se genera una y se guarda en un archivo
-# local (ignorado por git) para no perder la sesión en cada reinicio.
+# Si no se define en el .env, se genera una y se guarda junto a los
+# demás datos (en el disco persistente si hay uno configurado) para
+# no perder la sesión en cada reinicio.
 _SECRET_KEY = os.getenv("SECRET_KEY")
 if not _SECRET_KEY:
-    _ruta_clave = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.secret_key')
-    if os.path.exists(_ruta_clave):
-        with open(_ruta_clave) as f:
+    if os.path.exists(rutas.RUTA_SECRET_KEY):
+        with open(rutas.RUTA_SECRET_KEY) as f:
             _SECRET_KEY = f.read().strip()
     if not _SECRET_KEY:
         _SECRET_KEY = secrets.token_hex(32)
-        with open(_ruta_clave, 'w') as f:
+        with open(rutas.RUTA_SECRET_KEY, 'w') as f:
             f.write(_SECRET_KEY)
 app.secret_key = _SECRET_KEY
 
@@ -42,9 +43,30 @@ app.config['MAX_CONTENT_LENGTH'] = MAX_UPLOAD_MB * 1024 * 1024
 # ayuda a prevenir inyección de encabezados en el correo saliente)
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
+
+@app.template_global()
+def url_imagen(base, extension):
+    """
+    Convierte el 'nombre base' de una imagen guardado en la base de
+    datos en una URL real. Las imágenes originales del sitio (ej.
+    'imprenta-offset') siguen sirviéndose desde /static/. Las que el
+    cliente sube desde el panel (ej. 'media/hero-1-...') se sirven
+    desde el disco persistente mediante la ruta /media/<archivo>.
+    """
+    if base.startswith('media/'):
+        nombre_archivo = base[len('media/'):] + extension
+        return url_for('servir_media', filename=nombre_archivo)
+    return url_for('static', filename=base + extension)
+
+
+@app.route('/media/<path:filename>')
+def servir_media(filename):
+    return send_from_directory(rutas.CARPETA_MEDIA, filename)
+
+
 # ── BASE DE DATOS ──────────────────────────────────────
 def init_db():
-    conn = sqlite3.connect('suscriptores.db')
+    conn = sqlite3.connect(rutas.RUTA_SUSCRIPTORES_DB)
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS suscriptores (
@@ -58,11 +80,13 @@ def init_db():
     conn.commit()
     conn.close()
 
+
+
 init_db()
 
 def guardar_email(email, ip):
     try:
-        conn = sqlite3.connect('suscriptores.db')
+        conn = sqlite3.connect(rutas.RUTA_SUSCRIPTORES_DB)
         c = conn.cursor()
         c.execute('''
             INSERT OR IGNORE INTO suscriptores (email, fecha, ip, consentimiento)
@@ -234,7 +258,7 @@ def eliminar_datos():
     if not email or not EMAIL_REGEX.match(email):
         return jsonify({"exito": False})
     try:
-        conn = sqlite3.connect('suscriptores.db')
+        conn = sqlite3.connect(rutas.RUTA_SUSCRIPTORES_DB)
         c = conn.cursor()
         c.execute('DELETE FROM suscriptores WHERE email = ?', (email,))
         conn.commit()
@@ -256,6 +280,7 @@ def _admin_context():
     return {
         "csrf_token": generar_csrf_token(),
         "nombres_tipo": content_store.NOMBRES_TIPO,
+        "disco_persistente": rutas.USANDO_DISCO_PERSISTENTE,
     }
 
 

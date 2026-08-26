@@ -1,0 +1,16 @@
+{% set d = s.datos %}
+<section id="porque">
+  <span class="section-tag reveal" style="color: var(--purple);">{{ d.etiqueta }}</span>
+  <h2 class="section-title reveal">{{ d.titulo }}</h2>
+  <p class="section-sub reveal">{{ d.subtitulo }}</p>
+
+  <div class="porque-grid">
+    {% for it in d.lista %}
+    <div class="porque-card reveal">
+      <div class="icon">{{ it.icono }}</div>
+      <h3>{{ it.titulo }}</h3>
+      <p>{{ it.texto }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>

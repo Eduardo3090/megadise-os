@@ -1,0 +1,7 @@
+{% set d = s.datos %}
+<section style="background:var(--paper); text-align:center; padding:6rem 5vw;">
+  <span class="section-tag reveal">{{ d.etiqueta }}</span>
+  <h2 class="section-title reveal">{{ d.titulo_linea1 }}<br>{{ d.titulo_linea2 }}</h2>
+  <p class="section-sub reveal" style="margin:0 auto 2.5rem;">{{ d.subtitulo }}</p>
+  <a href="{{ d.boton_link }}" class="btn-primary reveal">{{ d.boton_texto }}</a>
+</section>

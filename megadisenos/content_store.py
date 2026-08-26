@@ -14,8 +14,9 @@ cliente edite algo desde el panel).
 import sqlite3
 import json
 import os
+import rutas
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'contenido.db')
+DB_PATH = rutas.RUTA_CONTENIDO_DB
 
 
 def get_conn():

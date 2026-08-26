@@ -1,0 +1,18 @@
+{% set d = s.datos %}
+<section style="background: var(--paper); padding: 6rem 5vw;">
+  <span class="section-tag reveal" style="color: var(--orange);">{{ d.etiqueta }}</span>
+  <h2 class="section-title reveal">{{ d.titulo }}</h2>
+  <div class="prox-grid">
+    {% for it in d.lista %}
+    <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
+      <picture>
+        <source srcset="{{ url_imagen(it.imagen, '.webp') }}" type="image/webp">
+        <img loading="lazy" src="{{ url_imagen(it.imagen, '.jpg') }}" alt="{{ it.titulo }}" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      </picture>
+      <div style="padding:1.5rem;">
+        <h3>{{ it.titulo }}</h3>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>

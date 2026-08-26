@@ -1,0 +1,180 @@
+{% extends "admin/base_admin.html" %}
+{% block titulo %}Editar {{ nombres_tipo[seccion.tipo] }}{% endblock %}
+{% block contenido %}
+{% set d = seccion.datos %}
+
+<a href="{{ url_for('admin_dashboard') }}" class="admin-volver"><i class="fa-solid fa-arrow-left"></i> Volver a la página de inicio</a>
+
+<div class="admin-header-row">
+    <div>
+        <h1>{{ nombres_tipo[seccion.tipo] }}</h1>
+        <p class="admin-subtext">Edita el texto y las imágenes de este bloque. Deja un campo de imagen vacío para conservar la imagen actual.</p>
+    </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data" class="admin-card admin-form">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+{% if seccion.tipo == 'hero' %}
+    <label>Texto pequeño de arriba (etiqueta)</label>
+    <input type="text" name="etiqueta" value="{{ d.etiqueta }}">
+
+    <div class="admin-grid-2">
+        <div><label>Título — línea 1</label><input type="text" name="titulo_linea1" value="{{ d.titulo_linea1 }}"></div>
+        <div><label>Título — palabra destacada</label><input type="text" name="titulo_acento" value="{{ d.titulo_acento }}"></div>
+    </div>
+    <label>Título — línea 2</label>
+    <input type="text" name="titulo_linea2" value="{{ d.titulo_linea2 }}">
+
+    <label>Subtítulo</label>
+    <textarea name="subtitulo" rows="3">{{ d.subtitulo }}</textarea>
+
+    <div class="admin-grid-2">
+        <div><label>Botón 1 — texto</label><input type="text" name="boton1_texto" value="{{ d.boton1_texto }}"></div>
+        <div><label>Botón 1 — enlace</label><input type="text" name="boton1_link" value="{{ d.boton1_link }}"></div>
+    </div>
+    <div class="admin-grid-2">
+        <div><label>Botón 2 — texto</label><input type="text" name="boton2_texto" value="{{ d.boton2_texto }}"></div>
+        <div><label>Botón 2 — enlace</label><input type="text" name="boton2_link" value="{{ d.boton2_link }}"></div>
+    </div>
+
+    <h3 class="admin-subheading">Tarjetas de servicios (4)</h3>
+    {% for t in d.tarjetas %}
+    <div class="admin-subcard">
+        <span class="admin-subcard-tag">Tarjeta {{ loop.index }}</span>
+        <div class="admin-grid-image">
+            <div>
+                <img class="admin-img-preview" src="{{ url_imagen(t.imagen, '.jpg') }}" alt="">
+                <label>Cambiar imagen</label>
+                <input type="file" name="imagen__tarjetas__{{ loop.index0 }}" accept="image/*">
+            </div>
+            <div>
+                <label>Título</label>
+                <input type="text" name="tarjetas__{{ loop.index0 }}__titulo" value="{{ t.titulo }}">
+                <label>Texto</label>
+                <input type="text" name="tarjetas__{{ loop.index0 }}__texto" value="{{ t.texto }}">
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+{% elif seccion.tipo == 'resenas' %}
+    <label>Texto pequeño de arriba (etiqueta)</label>
+    <input type="text" name="etiqueta" value="{{ d.etiqueta }}">
+    <label>Título</label>
+    <input type="text" name="titulo" value="{{ d.titulo }}">
+    <label>Resumen de calificación</label>
+    <input type="text" name="resumen" value="{{ d.resumen }}">
+
+    <h3 class="admin-subheading">Reseñas destacadas (3)</h3>
+    {% for r in d.resenas %}
+    <div class="admin-subcard">
+        <span class="admin-subcard-tag">Reseña {{ loop.index }}</span>
+        <label>Estrellas (1 a 5)</label>
+        <input type="number" min="1" max="5" name="resenas__{{ loop.index0 }}__estrellas" value="{{ r.estrellas }}">
+        <label>Texto de la reseña</label>
+        <textarea name="resenas__{{ loop.index0 }}__texto" rows="2">{{ r.texto }}</textarea>
+        <label>Autor</label>
+        <input type="text" name="resenas__{{ loop.index0 }}__autor" value="{{ r.autor }}">
+    </div>
+    {% endfor %}
+
+{% elif seccion.tipo == 'porque' %}
+    <label>Texto pequeño de arriba (etiqueta)</label>
+    <input type="text" name="etiqueta" value="{{ d.etiqueta }}">
+    <label>Título</label>
+    <input type="text" name="titulo" value="{{ d.titulo }}">
+    <label>Subtítulo</label>
+    <textarea name="subtitulo" rows="2">{{ d.subtitulo }}</textarea>
+
+    <h3 class="admin-subheading">Ventajas (4)</h3>
+    {% for it in d.lista %}
+    <div class="admin-subcard">
+        <span class="admin-subcard-tag">Ventaja {{ loop.index }}</span>
+        <label>Ícono (emoji)</label>
+        <input type="text" name="lista__{{ loop.index0 }}__icono" value="{{ it.icono }}" maxlength="4" style="max-width:100px;">
+        <label>Título</label>
+        <input type="text" name="lista__{{ loop.index0 }}__titulo" value="{{ it.titulo }}">
+        <label>Texto</label>
+        <input type="text" name="lista__{{ loop.index0 }}__texto" value="{{ it.texto }}">
+    </div>
+    {% endfor %}
+
+{% elif seccion.tipo == 'proyectos' %}
+    <label>Texto pequeño de arriba (etiqueta)</label>
+    <input type="text" name="etiqueta" value="{{ d.etiqueta }}">
+    <label>Título</label>
+    <input type="text" name="titulo" value="{{ d.titulo }}">
+
+    <h3 class="admin-subheading">Proyectos destacados (3)</h3>
+    {% for it in d.lista %}
+    <div class="admin-subcard">
+        <span class="admin-subcard-tag">Proyecto {{ loop.index }}</span>
+        <div class="admin-grid-image">
+            <div>
+                <img class="admin-img-preview" src="{{ url_imagen(it.imagen, '.jpg') }}" alt="">
+                <label>Cambiar imagen</label>
+                <input type="file" name="imagen__lista__{{ loop.index0 }}" accept="image/*">
+            </div>
+            <div>
+                <label>Título</label>
+                <input type="text" name="lista__{{ loop.index0 }}__titulo" value="{{ it.titulo }}">
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+{% elif seccion.tipo == 'stats' %}
+    <h3 class="admin-subheading">Cifras (4)</h3>
+    {% for it in d.lista %}
+    <div class="admin-subcard">
+        <span class="admin-subcard-tag">Cifra {{ loop.index }}</span>
+        <div class="admin-grid-2">
+            <div><label>Número</label><input type="text" name="lista__{{ loop.index0 }}__numero" value="{{ it.numero }}"></div>
+            <div><label>Descripción</label><input type="text" name="lista__{{ loop.index0 }}__etiqueta" value="{{ it.etiqueta }}"></div>
+        </div>
+    </div>
+    {% endfor %}
+
+{% elif seccion.tipo == 'acompanamiento' %}
+    <div class="admin-grid-image">
+        <div>
+            <img class="admin-img-preview" src="{{ url_imagen(d.imagen, '.png' if d.imagen == 'logotipo' else '.jpg') }}" alt="">
+            <label>Cambiar imagen</label>
+            <input type="file" name="imagen__imagen" accept="image/*">
+        </div>
+        <div>
+            <label>Texto pequeño de arriba (etiqueta)</label>
+            <input type="text" name="etiqueta" value="{{ d.etiqueta }}">
+            <label>Título</label>
+            <textarea name="titulo" rows="2">{{ d.titulo }}</textarea>
+            <label>Texto</label>
+            <textarea name="texto" rows="4">{{ d.texto }}</textarea>
+            <label>Botón — texto</label>
+            <input type="text" name="boton_texto" value="{{ d.boton_texto }}">
+            <label>Botón — enlace</label>
+            <input type="text" name="boton_link" value="{{ d.boton_link }}">
+        </div>
+    </div>
+
+{% elif seccion.tipo == 'cta' %}
+    <label>Texto pequeño de arriba (etiqueta)</label>
+    <input type="text" name="etiqueta" value="{{ d.etiqueta }}">
+    <div class="admin-grid-2">
+        <div><label>Título — línea 1</label><input type="text" name="titulo_linea1" value="{{ d.titulo_linea1 }}"></div>
+        <div><label>Título — línea 2</label><input type="text" name="titulo_linea2" value="{{ d.titulo_linea2 }}"></div>
+    </div>
+    <label>Subtítulo</label>
+    <textarea name="subtitulo" rows="2">{{ d.subtitulo }}</textarea>
+    <div class="admin-grid-2">
+        <div><label>Botón — texto</label><input type="text" name="boton_texto" value="{{ d.boton_texto }}"></div>
+        <div><label>Botón — enlace</label><input type="text" name="boton_link" value="{{ d.boton_link }}"></div>
+    </div>
+{% endif %}
+
+<div class="admin-form-acciones">
+    <button type="submit" class="admin-btn admin-btn-primary"><i class="fa-solid fa-check"></i> Guardar cambios</button>
+    <a href="{{ url_for('admin_dashboard') }}" class="admin-btn admin-btn-ghost">Cancelar</a>
+</div>
+</form>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "admin/base_admin.html" %}
+{% block titulo %}Página de inicio{% endblock %}
+{% block contenido %}
+<div class="admin-header-row">
+    <div>
+        <h1>Página de inicio</h1>
+        <p class="admin-subtext">Ordena, muestra/oculta y edita cada bloque de tu página principal. Los cambios se ven al instante en el sitio.</p>
+    </div>
+</div>
+
+{% if not disco_persistente %}
+<div class="admin-flash admin-flash-error" style="margin-bottom:1.8rem;">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    Todavía no hay un disco persistente conectado. Tus cambios pueden perderse si el sitio se reinicia.
+</div>
+{% endif %}
+
+<ul class="admin-secciones-lista">
+    {% for s in secciones %}
+    <li class="admin-seccion-item {% if not s.visible %}admin-seccion-oculta{% endif %}">
+        <div class="admin-seccion-orden">
+            <form method="POST" action="{{ url_for('admin_mover', seccion_id=s.id, direccion='subir') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="admin-orden-btn" {% if loop.first %}disabled{% endif %} aria-label="Subir sección">
+                    <i class="fa-solid fa-chevron-up"></i>
+                </button>
+            </form>
+            <form method="POST" action="{{ url_for('admin_mover', seccion_id=s.id, direccion='bajar') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="admin-orden-btn" {% if loop.last %}disabled{% endif %} aria-label="Bajar sección">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+            </form>
+        </div>
+
+        <div class="admin-seccion-info">
+            <span class="admin-seccion-nombre">{{ nombres_tipo[s.tipo] }}</span>
+            <span class="admin-seccion-estado">
+                {% if s.visible %}<i class="fa-solid fa-eye"></i> Visible en el sitio{% else %}<i class="fa-solid fa-eye-slash"></i> Oculta{% endif %}
+            </span>
+        </div>
+
+        <div class="admin-seccion-acciones">
+            <a href="{{ url_for('admin_editar_seccion', seccion_id=s.id) }}" class="admin-btn admin-btn-secondary">
+                <i class="fa-solid fa-pen"></i> Editar
+            </a>
+            <form method="POST" action="{{ url_for('admin_alternar_visibilidad', seccion_id=s.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="admin-btn {% if s.visible %}admin-btn-ghost{% else %}admin-btn-primary{% endif %}">
+                    {% if s.visible %}<i class="fa-solid fa-eye-slash"></i> Ocultar{% else %}<i class="fa-solid fa-eye"></i> Mostrar{% endif %}
+                </button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
