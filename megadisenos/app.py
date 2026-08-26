@@ -1,16 +1,42 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, abort
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import sqlite3
 import os
 import re
+import secrets
 from datetime import datetime
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
+
+import content_store
+import image_tools
+from admin_auth import login_required, generar_csrf_token, validar_csrf
 
 load_dotenv()  # Carga variables desde un archivo .env en desarrollo local
 
 app = Flask(__name__)
+
+# La SECRET_KEY firma la cookie de sesión del panel /admin.
+# Si no se define en el .env, se genera una y se guarda en un archivo
+# local (ignorado por git) para no perder la sesión en cada reinicio.
+_SECRET_KEY = os.getenv("SECRET_KEY")
+if not _SECRET_KEY:
+    _ruta_clave = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.secret_key')
+    if os.path.exists(_ruta_clave):
+        with open(_ruta_clave) as f:
+            _SECRET_KEY = f.read().strip()
+    if not _SECRET_KEY:
+        _SECRET_KEY = secrets.token_hex(32)
+        with open(_ruta_clave, 'w') as f:
+            f.write(_SECRET_KEY)
+app.secret_key = _SECRET_KEY
+
+content_store.init_db()
+
+MAX_UPLOAD_MB = 8
+app.config['MAX_CONTENT_LENGTH'] = MAX_UPLOAD_MB * 1024 * 1024
 
 # Validación simple de formato de correo (evita datos basura y
 # ayuda a prevenir inyección de encabezados en el correo saliente)
@@ -52,7 +78,8 @@ def guardar_email(email, ip):
 # ── RUTAS ──────────────────────────────────────────────
 @app.route('/')
 def index():
-    return render_template('index.html')
+    secciones = content_store.obtener_secciones('inicio', solo_visibles=True)
+    return render_template('index.html', secciones=secciones)
 
 @app.route('/nosotros')
 def nosotros():
@@ -219,6 +246,112 @@ def eliminar_datos():
 @app.route('/funciones-futuras')
 def funciones_futuras():
     return render_template('funciones_futuras.html')
+
+# ── PANEL DE EDICIÓN (/admin) ──────────────────────────
+import seccion_formulario
+
+
+@app.context_processor
+def _admin_context():
+    return {
+        "csrf_token": generar_csrf_token(),
+        "nombres_tipo": content_store.NOMBRES_TIPO,
+    }
+
+
+@app.route('/admin')
+@login_required
+def admin_dashboard():
+    secciones = content_store.obtener_secciones('inicio')
+    return render_template('admin/dashboard.html', secciones=secciones)
+
+
+@app.route('/admin/configurar', methods=['GET', 'POST'])
+def admin_configurar():
+    # Solo se puede usar esta pantalla si todavía no existe ningún administrador.
+    if content_store.existe_admin():
+        return redirect(url_for('admin_login'))
+
+    if request.method == 'POST':
+        validar_csrf(request.form)
+        usuario = request.form.get('usuario', '').strip()
+        password = request.form.get('password', '')
+        password2 = request.form.get('password2', '')
+
+        if not usuario or len(password) < 8:
+            flash('El usuario no puede estar vacío y la contraseña debe tener al menos 8 caracteres.', 'error')
+            return render_template('admin/configurar.html')
+        if password != password2:
+            flash('Las contraseñas no coinciden.', 'error')
+            return render_template('admin/configurar.html')
+
+        content_store.crear_admin(usuario, generate_password_hash(password))
+        flash('Tu acceso fue creado correctamente. Ya puedes iniciar sesión.', 'exito')
+        return redirect(url_for('admin_login'))
+
+    return render_template('admin/configurar.html')
+
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if not content_store.existe_admin():
+        return redirect(url_for('admin_configurar'))
+
+    siguiente = request.values.get('siguiente') or url_for('admin_dashboard')
+
+    if request.method == 'POST':
+        validar_csrf(request.form)
+        usuario = request.form.get('usuario', '').strip()
+        password = request.form.get('password', '')
+        admin = content_store.obtener_admin_por_usuario(usuario)
+        if admin and check_password_hash(admin['password_hash'], password):
+            session.clear()
+            session['admin_id'] = admin['id']
+            return redirect(request.form.get('siguiente') or url_for('admin_dashboard'))
+        flash('Usuario o contraseña incorrectos.', 'error')
+
+    return render_template('admin/login.html', siguiente=siguiente)
+
+
+@app.route('/admin/logout')
+def admin_logout():
+    session.clear()
+    return redirect(url_for('admin_login'))
+
+
+@app.route('/admin/seccion/<int:seccion_id>', methods=['GET', 'POST'])
+@login_required
+def admin_editar_seccion(seccion_id):
+    seccion = content_store.obtener_seccion(seccion_id)
+    if not seccion:
+        abort(404)
+
+    if request.method == 'POST':
+        validar_csrf(request.form)
+        nuevos_datos = seccion_formulario.procesar_formulario(seccion, request.form, request.files)
+        content_store.actualizar_datos_seccion(seccion_id, nuevos_datos)
+        flash('Cambios guardados correctamente.', 'exito')
+        return redirect(url_for('admin_editar_seccion', seccion_id=seccion_id))
+
+    return render_template('admin/editar.html', seccion=seccion)
+
+
+@app.route('/admin/seccion/<int:seccion_id>/visibilidad', methods=['POST'])
+@login_required
+def admin_alternar_visibilidad(seccion_id):
+    validar_csrf(request.form)
+    content_store.alternar_visibilidad(seccion_id)
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/seccion/<int:seccion_id>/mover/<direccion>', methods=['POST'])
+@login_required
+def admin_mover(seccion_id, direccion):
+    validar_csrf(request.form)
+    if direccion in ('subir', 'bajar'):
+        content_store.mover_seccion(seccion_id, direccion)
+    return redirect(url_for('admin_dashboard'))
+
 
 if __name__ == '__main__':
     debug_mode = os.getenv("FLASK_DEBUG", "false").lower() == "true"

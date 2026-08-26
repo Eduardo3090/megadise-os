@@ -1,0 +1,28 @@
+{% set d = s.datos %}
+<section id="acompanamiento" class="acompanamiento-section" style="background: var(--paper); padding-top: 7rem; padding-bottom: 7rem;">
+  <div class="acompanamiento-grid" style="display:grid; grid-template-columns:1fr 1.4fr; gap:4rem; align-items:center;">
+    <div class="reveal" style="text-align:center;">
+      <picture>
+        <source srcset="{{ url_for('static', filename=d.imagen + '.webp') }}" type="image/webp">
+        <img
+          loading="lazy"
+          src="{{ url_for('static', filename=d.imagen + ('.png' if d.imagen == 'logotipo' else '.jpg')) }}"
+          alt="Megadiseños"
+          style="max-width: 100%; width: 100%; height: auto;"
+        >
+      </picture>
+    </div>
+    <div class="reveal">
+      <span class="section-tag">{{ d.etiqueta }}</span>
+      <h2 class="section-title" style="font-size: clamp(2.2rem, 3.6vw, 3.4rem);">
+        {{ d.titulo }}
+      </h2>
+      <p class="section-sub" style="max-width: 55ch; margin-bottom: 2rem;">
+        {{ d.texto }}
+      </p>
+      <a href="{{ d.boton_link }}" target="_blank" class="btn-primary">
+        {{ d.boton_texto }}
+      </a>
+    </div>
+  </div>
+</section>

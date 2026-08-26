@@ -1,0 +1,32 @@
+{% set d = s.datos %}
+<section id="hero">
+  <div class="hero-bg-line"></div>
+  <div class="hero-noise"></div>
+
+  <div class="hero-left">
+    <span class="hero-tag">{{ d.etiqueta }}</span>
+    <h1 class="hero-title">
+      {{ d.titulo_linea1 }}<span class="accent">{{ d.titulo_acento }}</span>{{ d.titulo_linea2 }}
+    </h1>
+    <p class="hero-sub">{{ d.subtitulo }}</p>
+    <div class="hero-btns">
+      <a href="{{ d.boton1_link }}" class="btn-primary">{{ d.boton1_texto }}</a>
+      <a href="{{ d.boton2_link }}" class="btn-ghost">{{ d.boton2_texto }}</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    {% for t in d.tarjetas %}
+    <div class="hero-card">
+      <div class="icon" style="width:100%; aspect-ratio:1/1; overflow:hidden; margin-bottom:.7rem;">
+        <picture style="display:block; width:100%; height:100%;">
+          <source srcset="{{ url_for('static', filename=t.imagen + '.webp') }}" type="image/webp">
+          <img src="{{ url_for('static', filename=t.imagen + '.jpg') }}" alt="{{ t.titulo }}" style="width:100%; height:100%; object-fit:cover; display:block;">
+        </picture>
+      </div>
+      <h3>{{ t.titulo }}</h3>
+      <p>{{ t.texto }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>

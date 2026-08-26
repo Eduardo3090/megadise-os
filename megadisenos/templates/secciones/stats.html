@@ -1,0 +1,11 @@
+{% set d = s.datos %}
+<section style="background:var(--paper); padding:5rem 5vw;">
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px; background:rgba(13,13,13,.08); border:1px solid rgba(13,13,13,.08);">
+    {% for it in d.lista %}
+    <div class="stat-card reveal" style="text-align:center;">
+      <span class="stat-num">{{ it.numero }}</span>
+      <span class="stat-label">{{ it.etiqueta }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</section>
