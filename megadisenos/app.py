@@ -174,7 +174,89 @@ def portafolio():
 @app.route('/contactanos', methods=['GET', 'POST'])
 def contactanos():
     if request.method == 'POST':
-        return jsonify({"exito": True, "mensaje": "Mensaje enviado correctamente"})
+        data = request.get_json(silent=True) or request.form
+        nombre = (data.get('nombre') or '').strip()
+        telefono = (data.get('telefono') or '').strip()
+        email_cliente = (data.get('email') or '').strip()
+        mensaje = (data.get('mensaje') or '').strip()
+        honeypot = (data.get('empresa_web') or '').strip()
+
+        if honeypot:
+            return jsonify({"exito": True})
+
+        if not nombre or not email_cliente or not mensaje:
+            return jsonify({"exito": False, "mensaje": "Por favor completa nombre, correo y mensaje."})
+
+        if not EMAIL_REGEX.match(email_cliente):
+            return jsonify({"exito": False, "mensaje": "El correo ingresado no es válido."})
+
+        CORREO_EMPRESA = os.getenv("CORREO_EMPRESA", "ventasmegadisenos@gmail.com")
+        CONTRASENA = os.getenv("CONTRASENA_APP")
+
+        if not CONTRASENA:
+            return jsonify({
+                "exito": False,
+                "mensaje": "No se pudo enviar automáticamente (falta configurar CONTRASENA_APP). Escríbenos directo a ventasmegadisenos@gmail.com o por WhatsApp."
+            })
+
+        try:
+            msg_interno = MIMEMultipart("alternative")
+            msg_interno["Subject"] = f"Nuevo mensaje de contacto de {nombre}"
+            msg_interno["From"] = CORREO_EMPRESA
+            msg_interno["To"] = CORREO_EMPRESA
+            msg_interno["Reply-To"] = email_cliente
+            cuerpo_interno = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; color: #333;">
+                <h2 style="color:#c99a1e;">Nuevo mensaje desde el formulario de contacto</h2>
+                <p><strong>Nombre:</strong> {nombre}</p>
+                <p><strong>Teléfono:</strong> {telefono or 'No proporcionado'}</p>
+                <p><strong>Correo:</strong> {email_cliente}</p>
+                <p><strong>Mensaje:</strong></p>
+                <p style="background:#f5f0e6; padding:12px; border-radius:6px;">{mensaje}</p>
+            </body>
+            </html>
+            """
+            msg_interno.attach(MIMEText(cuerpo_interno, "html"))
+
+            msg_cliente = MIMEMultipart("alternative")
+            msg_cliente["Subject"] = "Gracias por contactar a Megadiseños"
+            msg_cliente["From"] = CORREO_EMPRESA
+            msg_cliente["To"] = email_cliente
+            cuerpo_cliente = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto;">
+                <div style="background-color: #1a1a1a; padding: 20px; text-align: center;">
+                    <h1 style="color: #FFC107; margin: 0;">Megadiseños</h1>
+                    <p style="color: #fff; font-size: 13px;">Impresión Digital Publicitaria</p>
+                </div>
+                <div style="padding: 30px;">
+                    <p>Hola {nombre},</p>
+                    <p>Gracias por comunicarte con nosotros. Recibimos tu mensaje y <strong>Megadiseños se contactará contigo en menos de 24 horas</strong>.</p>
+                    <p>Si tu consulta es urgente, también puedes escribirnos directo por WhatsApp:</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="https://wa.me/56948623875"
+                           style="background-color: #FFC107; color: #000; padding: 12px 28px;
+                                  text-decoration: none; border-radius: 5px; font-weight: bold;">
+                            Escribir por WhatsApp
+                        </a>
+                    </div>
+                    <p style="font-size: 12px; color: #999;">Este es un correo automático de confirmación, no es necesario que lo respondas.</p>
+                </div>
+            </body>
+            </html>
+            """
+            msg_cliente.attach(MIMEText(cuerpo_cliente, "html"))
+
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                server.login(CORREO_EMPRESA, CONTRASENA)
+                server.sendmail(CORREO_EMPRESA, CORREO_EMPRESA, msg_interno.as_string())
+                server.sendmail(CORREO_EMPRESA, email_cliente, msg_cliente.as_string())
+
+            return jsonify({"exito": True})
+        except Exception as e:
+            return jsonify({"exito": False, "mensaje": str(e)})
+
     return render_template('contactanos.html')
 
 @app.route('/privacidad')
