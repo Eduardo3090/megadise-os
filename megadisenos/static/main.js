@@ -81,3 +81,52 @@ function copiarDato(id, btn) {
     alert('No se pudo copiar automáticamente. Este es el dato: ' + texto);
   });
 }
+
+
+// ─── FORMULARIO DE CONTACTO ──────────────────────────
+function enviarContacto() {
+  const nombre = document.getElementById('nombre').value.trim();
+  const telefono = document.getElementById('telefono').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const mensaje = document.getElementById('mensaje').value.trim();
+  const honeypot = document.getElementById('empresa_web').value.trim();
+  const feedback = document.getElementById('mensajeContacto');
+  const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+  if (!nombre || !email || !mensaje) {
+    alert('Por favor completa nombre, correo y mensaje.');
+    return;
+  }
+  if (!emailRegex.test(email)) {
+    alert('Por favor ingresa un correo válido.');
+    return;
+  }
+
+  fetch('/contactanos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, telefono, email, mensaje, empresa_web: honeypot })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.exito) {
+      feedback.textContent = '✅ ¡Mensaje enviado! Te contactaremos dentro de 24 horas.';
+      feedback.style.color = '#2a8f4d';
+      feedback.style.display = 'block';
+      document.getElementById('nombre').value = '';
+      document.getElementById('telefono').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('mensaje').value = '';
+    } else {
+      feedback.textContent = '⚠️ ' + (data.mensaje || 'No se pudo enviar. Intenta de nuevo o escríbenos por WhatsApp.');
+      feedback.style.color = '#c0392b';
+      feedback.style.display = 'block';
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    feedback.textContent = '⚠️ Hubo un problema de conexión. Intenta de nuevo o escríbenos por WhatsApp.';
+    feedback.style.color = '#c0392b';
+    feedback.style.display = 'block';
+  });
+}
