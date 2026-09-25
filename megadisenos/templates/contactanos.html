@@ -78,39 +78,38 @@
           <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">Banco</strong>
           <span id="dato-banco">Santander</span>
         </div>
-        <button type="button" onclick="copiarDato('dato-banco', this)" style="background:none; border:1px solid var(--gold); color:var(--ink); border-radius:6px; padding:.35rem .8rem; font-size:.75rem; cursor:pointer; flex-shrink:0;">Copiar</button>
       </div>
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e0d9cf; padding-bottom:.7rem;">
         <div>
           <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">Cuenta Corriente</strong>
           <span id="dato-cuenta">71674452</span>
         </div>
-        <button type="button" onclick="copiarDato('dato-cuenta', this)" style="background:none; border:1px solid var(--gold); color:var(--ink); border-radius:6px; padding:.35rem .8rem; font-size:.75rem; cursor:pointer; flex-shrink:0;">Copiar</button>
       </div>
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e0d9cf; padding-bottom:.7rem;">
         <div>
           <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">RUT</strong>
           <span id="dato-rut">76.724.923-3</span>
         </div>
-        <button type="button" onclick="copiarDato('dato-rut', this)" style="background:none; border:1px solid var(--gold); color:var(--ink); border-radius:6px; padding:.35rem .8rem; font-size:.75rem; cursor:pointer; flex-shrink:0;">Copiar</button>
       </div>
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e0d9cf; padding-bottom:.7rem;">
         <div>
           <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">Titular</strong>
           <span id="dato-titular">Sociedad Megadiseños Spa.</span>
         </div>
-        <button type="button" onclick="copiarDato('dato-titular', this)" style="background:none; border:1px solid var(--gold); color:var(--ink); border-radius:6px; padding:.35rem .8rem; font-size:.75rem; cursor:pointer; flex-shrink:0;">Copiar</button>
       </div>
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
           <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">Correo de aviso</strong>
           <span id="dato-mail">ventasmegadisenos@gmail.com</span>
         </div>
-        <button type="button" onclick="copiarDato('dato-mail', this)" style="background:none; border:1px solid var(--gold); color:var(--ink); border-radius:6px; padding:.35rem .8rem; font-size:.75rem; cursor:pointer; flex-shrink:0;">Copiar</button>
       </div>
     </div>
 
-    <p style="color:var(--gray); font-size:.82rem; margin-top:1.8rem; text-align:center;">
+    <button type="button" id="btn-copiar-todo" onclick="copiarTodosDatosPago(this)" class="btn-primary" style="width:100%; border:none; cursor:pointer; margin-top:1.8rem;">
+      Copiar todos los datos
+    </button>
+
+    <p style="color:var(--gray); font-size:.82rem; margin-top:1.2rem; text-align:center;">
       Envía tu comprobante de transferencia a <strong>ventasmegadisenos@gmail.com</strong> para agilizar tu pedido.
     </p>
   </div>
