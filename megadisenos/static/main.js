@@ -70,15 +70,27 @@ function enviarCorreo() {
   });
 }
 
-// ─── COPIAR DATOS DE PAGO ────────────────────────────
-function copiarDato(id, btn) {
-  const texto = document.getElementById(id).textContent.trim();
+// ─── COPIAR TODOS LOS DATOS DE PAGO ──────────────────
+function copiarTodosDatosPago(btn) {
+  const banco = document.getElementById('dato-banco').textContent.trim();
+  const cuenta = document.getElementById('dato-cuenta').textContent.trim();
+  const rut = document.getElementById('dato-rut').textContent.trim();
+  const titular = document.getElementById('dato-titular').textContent.trim();
+  const mail = document.getElementById('dato-mail').textContent.trim();
+
+  const texto =
+`Banco: ${banco}
+Cuenta Corriente: ${cuenta}
+RUT: ${rut}
+Titular: ${titular}
+Correo de aviso: ${mail}`;
+
   const original = btn.textContent;
   navigator.clipboard.writeText(texto).then(() => {
-    btn.textContent = '¡Copiado!';
-    setTimeout(() => { btn.textContent = original; }, 1500);
+    btn.textContent = '✅ ¡Datos copiados!';
+    setTimeout(() => { btn.textContent = original; }, 1800);
   }).catch(() => {
-    alert('No se pudo copiar automáticamente. Este es el dato: ' + texto);
+    alert('No se pudo copiar automáticamente. Estos son los datos:\n\n' + texto);
   });
 }
 
