@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     {% if modo_edicion or modo_previa %}
     <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='editor.css') }}">
     {% endif %}
 </head>
@@ -21,7 +22,7 @@
     <!-- Barra del editor visual (solo la ve el administrador) -->
     <div class="ed-ui ed-barra" id="edBarra">
         <div class="ed-barra-izq">
-            <span class="ed-logo">Megadiseños <span>· Editor</span></span>
+            {% with titulo='Editor' %}{% include 'admin/_marca_editor.html' %}{% endwith %}
             <span class="ed-estado" id="edEstado" data-borrador="{{ 1 if hay_borrador else 0 }}">
                 {% if hay_borrador %}● Cambios sin publicar{% else %}✓ Todo publicado{% endif %}
             </span>
@@ -35,7 +36,7 @@
         </div>
     </div>
     <div class="ed-ui ed-ayuda" id="edAyuda">
-        <strong>Estás editando la página de inicio.</strong>
+        <strong>Estás editando la página de inicio de {{ editor_nombre_sitio }}.</strong>
         Haz clic en cualquier texto para escribir, en una imagen para cambiarla, o pasa el mouse sobre una sección para moverla u ocultarla.
         Los cambios se guardan solos como borrador y <strong>no se ven en el sitio hasta que aprietes Publicar</strong>.
         <button type="button" class="ed-ayuda-cerrar" id="edAyudaCerrar" aria-label="Cerrar">✕</button>
@@ -49,7 +50,7 @@
     <!-- Barra de vista previa (solo la ve el administrador) -->
     <div class="ed-ui ed-barra ed-barra-previa">
         <div class="ed-barra-izq">
-            <span class="ed-logo">Vista previa</span>
+            {% with titulo='Vista previa' %}{% include 'admin/_marca_editor.html' %}{% endwith %}
             <span class="ed-estado">
                 {% if hay_borrador %}Así se verá el sitio cuando publiques{% else %}No hay cambios pendientes: esto es lo que ya está publicado{% endif %}
             </span>

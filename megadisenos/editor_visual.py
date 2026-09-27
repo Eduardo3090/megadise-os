@@ -21,6 +21,13 @@ from markupsafe import Markup, escape
 
 import rutas
 
+# ── Marca del editor ──────────────────────────────────────
+# El editor es un producto de Sertains Labs. Para usarlo en otro
+# proyecto, solo cambia NOMBRE_SITIO por el nombre del cliente.
+NOMBRE_SITIO = "Megadiseños"
+MARCA_EDITOR = "Sertains Labs"
+URL_MARCA = "https://www.sertainslabs.cl"
+
 LARGO_MAXIMO_TEXTO = 2000
 PATRON_IMAGEN = re.compile(r"^(media/)?[a-z0-9-]+$")
 PREFIJOS_LINK_PERMITIDOS = ("/", "#", "https://", "http://", "mailto:", "tel:")
@@ -74,6 +81,9 @@ def registrar(app):
     @app.context_processor
     def _contexto_editor():
         return {
+            "editor_nombre_sitio": NOMBRE_SITIO,
+            "editor_marca": MARCA_EDITOR,
+            "editor_url_marca": URL_MARCA,
             "modo_edicion": modo_edicion(),
             "modo_previa": bool(getattr(g, "modo_previa", False)),
         }

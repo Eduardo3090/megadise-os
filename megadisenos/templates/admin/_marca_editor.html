@@ -1,0 +1,6 @@
+{# Marca Sertains Labs para las barras del editor. `titulo` = "Editor", "Vista previa", etc. #}
+<span class="ed-marca" title="{{ editor_marca }}">
+    <img src="{{ url_for('static', filename='sertains-labs-logo.webp') }}" alt="{{ editor_marca }}" width="168" height="30">
+</span>
+<span class="ed-separador" aria-hidden="true"></span>
+<span class="ed-titulo">{{ titulo }}<span class="ed-titulo-sitio"> · {{ editor_nombre_sitio }}</span></span>

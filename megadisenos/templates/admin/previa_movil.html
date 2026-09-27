@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Vista previa en celular · Megadiseños</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <title>Vista previa en celular · {{ editor_nombre_sitio }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='editor.css') }}">
 </head>
 <body class="ed-previa-movil">
     <div class="ed-ui ed-barra ed-barra-previa">
         <div class="ed-barra-izq">
-            <span class="ed-logo">Vista previa <span>· Celular</span></span>
+            {% with titulo='Vista previa en celular' %}{% include 'admin/_marca_editor.html' %}{% endwith %}
             <span class="ed-estado">
                 {% if hay_borrador %}Así se verá el sitio cuando publiques{% else %}No hay cambios pendientes{% endif %}
             </span>
