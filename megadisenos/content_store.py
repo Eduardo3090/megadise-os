@@ -5,6 +5,14 @@ Maneja el contenido editable del sitio (textos, imágenes y el
 orden/visibilidad de las secciones) y el usuario administrador
 que puede editarlo desde /admin.
 
+Cada sección tiene dos versiones:
+- la PUBLICADA (columnas datos / visible / orden), que es la que ven
+  los visitantes, y
+- un BORRADOR opcional (columnas borrador_*), que es donde se guardan
+  los cambios hechos desde el editor visual hasta que el cliente
+  aprieta "Publicar". Si una columna borrador_* está vacía (NULL),
+  significa "igual que lo publicado".
+
 Todo se guarda en una base de datos SQLite separada (contenido.db)
 para no mezclarse con la base de suscriptores. Si el archivo no
 existe, se crea automáticamente y se rellena con el contenido
@@ -169,6 +177,13 @@ def init_db():
     ''')
     conn.commit()
 
+    # Migración: agrega las columnas del borrador si la base es antigua.
+    columnas = {fila[1] for fila in c.execute("PRAGMA table_info(secciones)").fetchall()}
+    for col, tipo in (("borrador_datos", "TEXT"), ("borrador_visible", "INTEGER"), ("borrador_orden", "INTEGER")):
+        if col not in columnas:
+            c.execute(f"ALTER TABLE secciones ADD COLUMN {col} {tipo}")
+    conn.commit()
+
     # Si la página de inicio no tiene secciones todavía, la rellenamos
     # con el contenido actual para no romper nada visualmente.
     existentes = c.execute("SELECT COUNT(*) FROM secciones WHERE pagina = 'inicio'").fetchone()[0]
@@ -183,75 +198,112 @@ def init_db():
 
 
 # ── SECCIONES ──────────────────────────────────────────────
-def obtener_secciones(pagina="inicio", solo_visibles=False):
-    conn = get_conn()
-    query = "SELECT * FROM secciones WHERE pagina = ?"
-    if solo_visibles:
-        query += " AND visible = 1"
-    query += " ORDER BY orden ASC"
-    filas = conn.execute(query, (pagina,)).fetchall()
-    conn.close()
-    resultado = []
-    for f in filas:
-        item = dict(f)
-        item["datos"] = json.loads(item["datos"])
-        resultado.append(item)
-    return resultado
-
-
-def obtener_seccion(seccion_id):
-    conn = get_conn()
-    fila = conn.execute("SELECT * FROM secciones WHERE id = ?", (seccion_id,)).fetchone()
-    conn.close()
-    if not fila:
-        return None
+def _fila_a_seccion(fila, borrador=False):
     item = dict(fila)
+    if borrador:
+        if item.get("borrador_datos") is not None:
+            item["datos"] = item["borrador_datos"]
+        if item.get("borrador_visible") is not None:
+            item["visible"] = item["borrador_visible"]
+        if item.get("borrador_orden") is not None:
+            item["orden"] = item["borrador_orden"]
     item["datos"] = json.loads(item["datos"])
+    for col in ("borrador_datos", "borrador_visible", "borrador_orden"):
+        item.pop(col, None)
     return item
 
 
-def actualizar_datos_seccion(seccion_id, datos_dict):
+def obtener_secciones(pagina="inicio", solo_visibles=False, borrador=False):
+    """
+    borrador=False → lo que ven los visitantes (versión publicada).
+    borrador=True  → lo que se está editando (publicado + cambios sin publicar).
+    """
+    conn = get_conn()
+    filas = conn.execute("SELECT * FROM secciones WHERE pagina = ?", (pagina,)).fetchall()
+    conn.close()
+    resultado = [_fila_a_seccion(f, borrador) for f in filas]
+    if solo_visibles:
+        resultado = [s for s in resultado if s["visible"]]
+    resultado.sort(key=lambda s: (s["orden"], s["id"]))
+    return resultado
+
+
+def obtener_seccion(seccion_id, borrador=False):
+    conn = get_conn()
+    fila = conn.execute("SELECT * FROM secciones WHERE id = ?", (seccion_id,)).fetchone()
+    conn.close()
+    return _fila_a_seccion(fila, borrador) if fila else None
+
+
+def guardar_borrador(pagina, secciones):
+    """
+    secciones: lista de dicts {id, orden, visible, datos} ya validados.
+    Solo toca las secciones que pertenecen a esa página.
+    """
+    conn = get_conn()
+    for s in secciones:
+        conn.execute(
+            "UPDATE secciones SET borrador_datos = ?, borrador_visible = ?, borrador_orden = ? "
+            "WHERE id = ? AND pagina = ?",
+            (json.dumps(s["datos"], ensure_ascii=False), 1 if s["visible"] else 0,
+             int(s["orden"]), s["id"], pagina)
+        )
+    conn.commit()
+    conn.close()
+
+
+def guardar_borrador_datos(seccion_id, datos_dict):
+    """Usado por el modo formulario: cambia solo los datos de una sección en el borrador."""
     conn = get_conn()
     conn.execute(
-        "UPDATE secciones SET datos = ? WHERE id = ?",
+        "UPDATE secciones SET borrador_datos = ? WHERE id = ?",
         (json.dumps(datos_dict, ensure_ascii=False), seccion_id)
     )
     conn.commit()
     conn.close()
 
 
-def alternar_visibilidad(seccion_id):
+def hay_borrador(pagina="inicio"):
+    """True si hay cambios guardados que todavía no se publican."""
     conn = get_conn()
-    fila = conn.execute("SELECT visible FROM secciones WHERE id = ?", (seccion_id,)).fetchone()
-    if fila:
-        nuevo = 0 if fila["visible"] else 1
-        conn.execute("UPDATE secciones SET visible = ? WHERE id = ?", (nuevo, seccion_id))
-        conn.commit()
+    filas = conn.execute(
+        "SELECT datos, visible, orden, borrador_datos, borrador_visible, borrador_orden "
+        "FROM secciones WHERE pagina = ?", (pagina,)
+    ).fetchall()
+    conn.close()
+    for f in filas:
+        if f["borrador_datos"] is not None and json.loads(f["borrador_datos"]) != json.loads(f["datos"]):
+            return True
+        if f["borrador_visible"] is not None and f["borrador_visible"] != f["visible"]:
+            return True
+        if f["borrador_orden"] is not None and f["borrador_orden"] != f["orden"]:
+            return True
+    return False
+
+
+def publicar_borrador(pagina="inicio"):
+    """Pasa el borrador al sitio público y lo deja vacío."""
+    conn = get_conn()
+    conn.execute(
+        "UPDATE secciones SET "
+        "datos = COALESCE(borrador_datos, datos), "
+        "visible = COALESCE(borrador_visible, visible), "
+        "orden = COALESCE(borrador_orden, orden), "
+        "borrador_datos = NULL, borrador_visible = NULL, borrador_orden = NULL "
+        "WHERE pagina = ?", (pagina,)
+    )
+    conn.commit()
     conn.close()
 
 
-def mover_seccion(seccion_id, direccion):
-    """direccion: 'subir' o 'bajar'. Intercambia el 'orden' con la sección vecina."""
+def descartar_borrador(pagina="inicio"):
+    """Borra los cambios sin publicar y vuelve a lo que está en el sitio."""
     conn = get_conn()
-    actual = conn.execute("SELECT * FROM secciones WHERE id = ?", (seccion_id,)).fetchone()
-    if not actual:
-        conn.close()
-        return
-    if direccion == "subir":
-        vecino = conn.execute(
-            "SELECT * FROM secciones WHERE pagina = ? AND orden < ? ORDER BY orden DESC LIMIT 1",
-            (actual["pagina"], actual["orden"])
-        ).fetchone()
-    else:
-        vecino = conn.execute(
-            "SELECT * FROM secciones WHERE pagina = ? AND orden > ? ORDER BY orden ASC LIMIT 1",
-            (actual["pagina"], actual["orden"])
-        ).fetchone()
-
-    if vecino:
-        conn.execute("UPDATE secciones SET orden = ? WHERE id = ?", (vecino["orden"], actual["id"]))
-        conn.execute("UPDATE secciones SET orden = ? WHERE id = ?", (actual["orden"], vecino["id"]))
-        conn.commit()
+    conn.execute(
+        "UPDATE secciones SET borrador_datos = NULL, borrador_visible = NULL, borrador_orden = NULL "
+        "WHERE pagina = ?", (pagina,)
+    )
+    conn.commit()
     conn.close()
 
 

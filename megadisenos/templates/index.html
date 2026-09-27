@@ -4,6 +4,12 @@
 
 {% block content %}
 {% for s in secciones %}
+    {% if modo_edicion %}
+    <div class="ed-seccion{% if not s.visible %} ed-oculta{% endif %}" data-sec="{{ s.id }}" data-nombre="{{ nombres_tipo[s.tipo] }}">
+    {% endif %}
     {% include 'secciones/' ~ s.tipo ~ '.html' %}
+    {% if modo_edicion %}
+    </div>
+    {% endif %}
 {% endfor %}
 {% endblock %}

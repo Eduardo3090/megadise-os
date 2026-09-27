@@ -3,12 +3,12 @@
 {% block contenido %}
 {% set d = seccion.datos %}
 
-<a href="{{ url_for('admin_dashboard') }}" class="admin-volver"><i class="fa-solid fa-arrow-left"></i> Volver a la página de inicio</a>
+<a href="{{ url_for('admin_dashboard') }}" class="admin-volver"><i class="fa-solid fa-arrow-left"></i> Volver al panel</a>
 
 <div class="admin-header-row">
     <div>
         <h1>{{ nombres_tipo[seccion.tipo] }}</h1>
-        <p class="admin-subtext">Edita el texto y las imágenes de este bloque. Deja un campo de imagen vacío para conservar la imagen actual.</p>
+        <p class="admin-subtext">Edita el texto y las imágenes de este bloque. Deja un campo de imagen vacío para conservar la imagen actual. Los cambios quedan como borrador hasta que los publiques desde el editor visual.</p>
     </div>
 </div>
 
@@ -44,7 +44,7 @@
         <span class="admin-subcard-tag">Tarjeta {{ loop.index }}</span>
         <div class="admin-grid-image">
             <div>
-                <img class="admin-img-preview" src="{{ url_for('static', filename=t.imagen + '.jpg') }}" alt="">
+                <img class="admin-img-preview" src="{{ url_imagen(t.imagen, '.jpg') }}" alt="">
                 <label>Cambiar imagen</label>
                 <input type="file" name="imagen__tarjetas__{{ loop.index0 }}" accept="image/*">
             </div>
@@ -112,7 +112,7 @@
         <span class="admin-subcard-tag">Proyecto {{ loop.index }}</span>
         <div class="admin-grid-image">
             <div>
-                <img class="admin-img-preview" src="{{ url_for('static', filename=it.imagen + '.jpg') }}" alt="">
+                <img class="admin-img-preview" src="{{ url_imagen(it.imagen, '.jpg') }}" alt="">
                 <label>Cambiar imagen</label>
                 <input type="file" name="imagen__lista__{{ loop.index0 }}" accept="image/*">
             </div>
@@ -139,7 +139,7 @@
 {% elif seccion.tipo == 'acompanamiento' %}
     <div class="admin-grid-image">
         <div>
-            <img class="admin-img-preview" src="{{ url_for('static', filename=d.imagen + '.png') if d.imagen == 'logotipo' else url_for('static', filename=d.imagen + '.jpg') }}" alt="">
+            <img class="admin-img-preview" src="{{ url_imagen(d.imagen, '.png' if d.imagen == 'logotipo' else '.jpg') }}" alt="">
             <label>Cambiar imagen</label>
             <input type="file" name="imagen__imagen" accept="image/*">
         </div>
@@ -173,7 +173,8 @@
 {% endif %}
 
 <div class="admin-form-acciones">
-    <button type="submit" class="admin-btn admin-btn-primary"><i class="fa-solid fa-check"></i> Guardar cambios</button>
+    <button type="submit" class="admin-btn admin-btn-primary"><i class="fa-solid fa-check"></i> Guardar borrador</button>
+    <a href="{{ url_for('admin_vista_previa') }}" class="admin-btn admin-btn-secondary" target="_blank"><i class="fa-solid fa-eye"></i> Vista previa</a>
     <a href="{{ url_for('admin_dashboard') }}" class="admin-btn admin-btn-ghost">Cancelar</a>
 </div>
 </form>

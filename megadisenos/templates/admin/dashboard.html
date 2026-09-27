@@ -1,48 +1,53 @@
 {% extends "admin/base_admin.html" %}
-{% block titulo %}Página de inicio{% endblock %}
+{% block titulo %}Panel{% endblock %}
 {% block contenido %}
 <div class="admin-header-row">
     <div>
         <h1>Página de inicio</h1>
-        <p class="admin-subtext">Ordena, muestra/oculta y edita cada bloque de tu página principal. Los cambios se ven al instante en el sitio.</p>
+        <p class="admin-subtext">
+            {% if hay_borrador %}
+                Tienes <strong>cambios sin publicar</strong>. Revísalos en la vista previa y publícalos desde el editor.
+            {% else %}
+                Todo está publicado. Lo que ves en el sitio es la versión actual.
+            {% endif %}
+        </p>
     </div>
 </div>
+
+{% if not disco_persistente %}
+<div class="admin-flash admin-flash-error" style="margin-bottom:1.5rem;">
+    ⚠️ El sitio no tiene disco persistente configurado: los cambios se borrarán cuando el servidor se reinicie.
+</div>
+{% endif %}
+
+<div class="admin-card" style="margin-bottom:1.5rem;">
+    <h3 class="admin-subheading" style="margin-top:0;">Editor visual (recomendado)</h3>
+    <p class="admin-subtext" style="margin-bottom:1.2rem;">
+        Edita directamente sobre la página, tal como la ven tus clientes. Haz clic en un texto para escribir,
+        en una imagen para cambiarla, y mueve u oculta secciones. Nada se publica hasta que tú lo decidas.
+    </p>
+    <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
+        <a href="{{ url_for('admin_editor') }}" class="admin-btn admin-btn-primary"><i class="fa-solid fa-pen-ruler"></i> Abrir editor visual</a>
+        <a href="{{ url_for('admin_vista_previa') }}" class="admin-btn admin-btn-secondary" target="_blank"><i class="fa-solid fa-eye"></i> Vista previa</a>
+    </div>
+</div>
+
+<h3 class="admin-subheading">Modo formulario</h3>
+<p class="admin-subtext" style="margin-bottom:1rem;">Si prefieres, también puedes editar cada bloque con un formulario. Los cambios quedan igual como borrador.</p>
 
 <ul class="admin-secciones-lista">
     {% for s in secciones %}
     <li class="admin-seccion-item {% if not s.visible %}admin-seccion-oculta{% endif %}">
-        <div class="admin-seccion-orden">
-            <form method="POST" action="{{ url_for('admin_mover', seccion_id=s.id, direccion='subir') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <button type="submit" class="admin-orden-btn" {% if loop.first %}disabled{% endif %} aria-label="Subir sección">
-                    <i class="fa-solid fa-chevron-up"></i>
-                </button>
-            </form>
-            <form method="POST" action="{{ url_for('admin_mover', seccion_id=s.id, direccion='bajar') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <button type="submit" class="admin-orden-btn" {% if loop.last %}disabled{% endif %} aria-label="Bajar sección">
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-            </form>
-        </div>
-
         <div class="admin-seccion-info">
             <span class="admin-seccion-nombre">{{ nombres_tipo[s.tipo] }}</span>
             <span class="admin-seccion-estado">
-                {% if s.visible %}<i class="fa-solid fa-eye"></i> Visible en el sitio{% else %}<i class="fa-solid fa-eye-slash"></i> Oculta{% endif %}
+                {% if s.visible %}<i class="fa-solid fa-eye"></i> Visible{% else %}<i class="fa-solid fa-eye-slash"></i> Oculta{% endif %}
             </span>
         </div>
-
         <div class="admin-seccion-acciones">
             <a href="{{ url_for('admin_editar_seccion', seccion_id=s.id) }}" class="admin-btn admin-btn-secondary">
                 <i class="fa-solid fa-pen"></i> Editar
             </a>
-            <form method="POST" action="{{ url_for('admin_alternar_visibilidad', seccion_id=s.id) }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <button type="submit" class="admin-btn {% if s.visible %}admin-btn-ghost{% else %}admin-btn-primary{% endif %}">
-                    {% if s.visible %}<i class="fa-solid fa-eye-slash"></i> Ocultar{% else %}<i class="fa-solid fa-eye"></i> Mostrar{% endif %}
-                </button>
-            </form>
         </div>
     </li>
     {% endfor %}

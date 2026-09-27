@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, abort, send_from_directory
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, abort, send_from_directory, g
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -13,6 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import rutas
 import content_store
 import image_tools
+import editor_visual
 from admin_auth import login_required, generar_csrf_token, validar_csrf
 
 load_dotenv()  # Carga variables desde un archivo .env en desarrollo local
@@ -35,6 +36,7 @@ if not _SECRET_KEY:
 app.secret_key = _SECRET_KEY
 
 content_store.init_db()
+editor_visual.registrar(app)
 
 MAX_UPLOAD_MB = 8
 app.config['MAX_CONTENT_LENGTH'] = MAX_UPLOAD_MB * 1024 * 1024
@@ -366,11 +368,17 @@ def _admin_context():
     }
 
 
+def _validar_csrf_json():
+    """Para las llamadas del editor visual (fetch), el token va en un encabezado."""
+    validar_csrf({"csrf_token": request.headers.get("X-CSRF-Token", "")})
+
+
 @app.route('/admin')
 @login_required
 def admin_dashboard():
-    secciones = content_store.obtener_secciones('inicio')
-    return render_template('admin/dashboard.html', secciones=secciones)
+    secciones = content_store.obtener_secciones('inicio', borrador=True)
+    return render_template('admin/dashboard.html', secciones=secciones,
+                           hay_borrador=content_store.hay_borrador('inicio'))
 
 
 @app.route('/admin/configurar', methods=['GET', 'POST'])
@@ -404,7 +412,9 @@ def admin_login():
     if not content_store.existe_admin():
         return redirect(url_for('admin_configurar'))
 
-    siguiente = request.values.get('siguiente') or url_for('admin_dashboard')
+    siguiente = request.values.get('siguiente') or url_for('admin_editor')
+    if not siguiente.startswith('/') or siguiente.startswith('//'):
+        siguiente = url_for('admin_editor')
 
     if request.method == 'POST':
         validar_csrf(request.form)
@@ -414,7 +424,7 @@ def admin_login():
         if admin and check_password_hash(admin['password_hash'], password):
             session.clear()
             session['admin_id'] = admin['id']
-            return redirect(request.form.get('siguiente') or url_for('admin_dashboard'))
+            return redirect(siguiente)
         flash('Usuario o contraseña incorrectos.', 'error')
 
     return render_template('admin/login.html', siguiente=siguiente)
@@ -426,38 +436,96 @@ def admin_logout():
     return redirect(url_for('admin_login'))
 
 
+# ── Editor visual ─────────────────────────────────────────
+@app.route('/admin/editor')
+@login_required
+def admin_editor():
+    g.modo_edicion = True
+    secciones = content_store.obtener_secciones('inicio', borrador=True)
+    return render_template('index.html', secciones=secciones,
+                           estado_editor=secciones,
+                           hay_borrador=content_store.hay_borrador('inicio'))
+
+
+@app.route('/admin/vista-previa')
+@login_required
+def admin_vista_previa():
+    if request.args.get('dispositivo') == 'movil':
+        return render_template('admin/previa_movil.html',
+                               hay_borrador=content_store.hay_borrador('inicio'))
+    g.modo_previa = request.args.get('embed') != '1'
+    secciones = content_store.obtener_secciones('inicio', solo_visibles=True, borrador=True)
+    return render_template('index.html', secciones=secciones,
+                           hay_borrador=content_store.hay_borrador('inicio'))
+
+
+@app.route('/admin/editor/guardar', methods=['POST'])
+@login_required
+def admin_editor_guardar():
+    _validar_csrf_json()
+    data = request.get_json(silent=True) or {}
+    actuales = content_store.obtener_secciones('inicio', borrador=True)
+    limpias = editor_visual.validar_estado(actuales, data.get('secciones'))
+    content_store.guardar_borrador('inicio', limpias)
+    return jsonify({"ok": True, "hay_borrador": content_store.hay_borrador('inicio')})
+
+
+@app.route('/admin/editor/imagen', methods=['POST'])
+@login_required
+def admin_editor_imagen():
+    _validar_csrf_json()
+    archivo = request.files.get('imagen')
+    if not archivo or not archivo.filename or not image_tools.es_imagen_valida(archivo.filename):
+        return jsonify({"ok": False, "mensaje": "Sube una imagen JPG, PNG o WEBP."}), 400
+    try:
+        base = image_tools.guardar_imagen_optimizada(archivo, request.form.get('nombre', 'imagen'))
+    except Exception:
+        return jsonify({"ok": False, "mensaje": "No se pudo procesar esa imagen."}), 400
+    return jsonify({
+        "ok": True,
+        "base": base,
+        "jpg": url_imagen(base, '.jpg'),
+        "webp": url_imagen(base, '.webp'),
+    })
+
+
+@app.route('/admin/editor/publicar', methods=['POST'])
+@login_required
+def admin_editor_publicar():
+    if request.is_json:
+        _validar_csrf_json()
+        content_store.publicar_borrador('inicio')
+        return jsonify({"ok": True})
+    validar_csrf(request.form)
+    content_store.publicar_borrador('inicio')
+    flash('¡Cambios publicados! Ya se ven en el sitio.', 'exito')
+    return redirect(url_for('admin_editor'))
+
+
+@app.route('/admin/editor/descartar', methods=['POST'])
+@login_required
+def admin_editor_descartar():
+    _validar_csrf_json()
+    content_store.descartar_borrador('inicio')
+    return jsonify({"ok": True})
+
+
+# ── Modo formulario (alternativa al editor visual) ────────
 @app.route('/admin/seccion/<int:seccion_id>', methods=['GET', 'POST'])
 @login_required
 def admin_editar_seccion(seccion_id):
-    seccion = content_store.obtener_seccion(seccion_id)
+    seccion = content_store.obtener_seccion(seccion_id, borrador=True)
     if not seccion:
         abort(404)
 
     if request.method == 'POST':
         validar_csrf(request.form)
         nuevos_datos = seccion_formulario.procesar_formulario(seccion, request.form, request.files)
-        content_store.actualizar_datos_seccion(seccion_id, nuevos_datos)
-        flash('Cambios guardados correctamente.', 'exito')
+        content_store.guardar_borrador_datos(seccion_id, nuevos_datos)
+        flash('Guardado como borrador. Revísalo en la vista previa y publícalo desde el editor.', 'exito')
         return redirect(url_for('admin_editar_seccion', seccion_id=seccion_id))
 
     return render_template('admin/editar.html', seccion=seccion)
-
-
-@app.route('/admin/seccion/<int:seccion_id>/visibilidad', methods=['POST'])
-@login_required
-def admin_alternar_visibilidad(seccion_id):
-    validar_csrf(request.form)
-    content_store.alternar_visibilidad(seccion_id)
-    return redirect(url_for('admin_dashboard'))
-
-
-@app.route('/admin/seccion/<int:seccion_id>/mover/<direccion>', methods=['POST'])
-@login_required
-def admin_mover(seccion_id, direccion):
-    validar_csrf(request.form)
-    if direccion in ('subir', 'bajar'):
-        content_store.mover_seccion(seccion_id, direccion)
-    return redirect(url_for('admin_dashboard'))
 
 
 if __name__ == '__main__':

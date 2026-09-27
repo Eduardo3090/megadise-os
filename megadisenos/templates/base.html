@@ -10,8 +10,62 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% if modo_edicion or modo_previa %}
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="{{ url_for('static', filename='editor.css') }}">
+    {% endif %}
 </head>
-<body>
+<body{% if modo_edicion %} class="ed-modo"{% elif modo_previa %} class="ed-modo-previa"{% endif %}>
+
+{% if modo_edicion %}
+    <!-- Barra del editor visual (solo la ve el administrador) -->
+    <div class="ed-ui ed-barra" id="edBarra">
+        <div class="ed-barra-izq">
+            <span class="ed-logo">Megadiseños <span>· Editor</span></span>
+            <span class="ed-estado" id="edEstado" data-borrador="{{ 1 if hay_borrador else 0 }}">
+                {% if hay_borrador %}● Cambios sin publicar{% else %}✓ Todo publicado{% endif %}
+            </span>
+        </div>
+        <div class="ed-barra-der">
+            <button class="ed-btn ed-btn-ghost" id="edAyudaAbrir" type="button" title="¿Cómo se usa?" aria-label="Ayuda"><i class="fa-solid fa-circle-question"></i></button>
+            <a class="ed-btn ed-btn-ghost" href="{{ url_for('admin_dashboard') }}" title="Opciones y modo formulario"><i class="fa-solid fa-gear"></i><span> Opciones</span></a>
+            <button class="ed-btn ed-btn-ghost" id="edDescartar" type="button"><i class="fa-solid fa-rotate-left"></i><span> Descartar</span></button>
+            <button class="ed-btn ed-btn-sec" id="edPrevia" type="button"><i class="fa-solid fa-eye"></i><span> Vista previa</span></button>
+            <button class="ed-btn ed-btn-pri" id="edPublicar" type="button"><i class="fa-solid fa-upload"></i><span> Publicar</span></button>
+        </div>
+    </div>
+    <div class="ed-ui ed-ayuda" id="edAyuda">
+        <strong>Estás editando la página de inicio.</strong>
+        Haz clic en cualquier texto para escribir, en una imagen para cambiarla, o pasa el mouse sobre una sección para moverla u ocultarla.
+        Los cambios se guardan solos como borrador y <strong>no se ven en el sitio hasta que aprietes Publicar</strong>.
+        <button type="button" class="ed-ayuda-cerrar" id="edAyudaCerrar" aria-label="Cerrar">✕</button>
+    </div>
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensaje in mensajes %}
+        <div class="ed-ui ed-toast ed-toast-visible ed-toast-{{ categoria }}" data-auto="1">{{ mensaje }}</div>
+        {% endfor %}
+    {% endwith %}
+{% elif modo_previa %}
+    <!-- Barra de vista previa (solo la ve el administrador) -->
+    <div class="ed-ui ed-barra ed-barra-previa">
+        <div class="ed-barra-izq">
+            <span class="ed-logo">Vista previa</span>
+            <span class="ed-estado">
+                {% if hay_borrador %}Así se verá el sitio cuando publiques{% else %}No hay cambios pendientes: esto es lo que ya está publicado{% endif %}
+            </span>
+        </div>
+        <div class="ed-barra-der">
+            <a class="ed-btn ed-btn-ghost" href="{{ url_for('admin_vista_previa', dispositivo='movil') }}"><i class="fa-solid fa-mobile-screen"></i><span> Ver en celular</span></a>
+            <a class="ed-btn ed-btn-sec" href="{{ url_for('admin_editor') }}"><i class="fa-solid fa-pen"></i><span> Volver al editor</span></a>
+            {% if hay_borrador %}
+            <form method="POST" action="{{ url_for('admin_editor_publicar') }}" style="display:inline;" onsubmit="return confirm('¿Publicar estos cambios? Se verán de inmediato en el sitio.');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button class="ed-btn ed-btn-pri" type="submit"><i class="fa-solid fa-upload"></i><span> Publicar</span></button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
 
     <nav id="mainNav">
         <a href="/" class="nav-logo">
@@ -155,5 +209,21 @@
 </div>
 
 <script src="{{ url_for('static', filename='main.js') }}"></script>
+{% if modo_edicion %}
+<script>
+    window.ED_CONFIG = {
+        csrf: {{ csrf_token|tojson }},
+        estado: {{ estado_editor|tojson }},
+        urls: {
+            guardar: {{ url_for('admin_editor_guardar')|tojson }},
+            imagen: {{ url_for('admin_editor_imagen')|tojson }},
+            publicar: {{ url_for('admin_editor_publicar')|tojson }},
+            descartar: {{ url_for('admin_editor_descartar')|tojson }},
+            previa: {{ url_for('admin_vista_previa')|tojson }}
+        }
+    };
+</script>
+<script src="{{ url_for('static', filename='editor.js') }}"></script>
+{% endif %}
 </body>
 </html>
