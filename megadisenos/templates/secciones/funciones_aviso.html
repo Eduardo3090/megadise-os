@@ -1,0 +1,8 @@
+{% set d = s.datos %}
+<section style="background:rgba(255,255,255,.04); border-top:1px solid rgba(255,255,255,.08); padding:5rem 5vw; text-align:center;">
+  <h2 class="section-title reveal" style="color:#fff;">{{ ed(s, 'titulo_linea1', d.titulo_linea1) }}<br>{{ ed(s, 'titulo_linea2', d.titulo_linea2) }}</h2>
+  <p class="reveal" style="color:rgba(255,255,255,.45); margin-bottom:2rem; max-width:38ch; margin-left:auto; margin-right:auto;">
+    {{ ed(s, 'texto', d.texto) }}
+  </p>
+  <a href="{{ d.boton_link }}" class="btn-primary reveal"{{ ed_link(s, 'boton_link') }}>{{ ed(s, 'boton_texto', d.boton_texto) }}</a>
+</section>

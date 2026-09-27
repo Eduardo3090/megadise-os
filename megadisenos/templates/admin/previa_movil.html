@@ -13,16 +13,18 @@
     <div class="ed-ui ed-barra ed-barra-previa">
         <div class="ed-barra-izq">
             {% with titulo='Vista previa en celular' %}{% include 'admin/_marca_editor.html' %}{% endwith %}
+            {% with destino='admin_vista_previa', extra_url={'dispositivo': 'movil'} %}{% include 'admin/_selector_pagina.html' %}{% endwith %}
             <span class="ed-estado">
                 {% if hay_borrador %}Así se verá el sitio cuando publiques{% else %}No hay cambios pendientes{% endif %}
             </span>
         </div>
         <div class="ed-barra-der">
-            <a class="ed-btn ed-btn-ghost" href="{{ url_for('admin_vista_previa') }}"><i class="fa-solid fa-desktop"></i><span> Ver en escritorio</span></a>
-            <a class="ed-btn ed-btn-sec" href="{{ url_for('admin_editor') }}"><i class="fa-solid fa-pen"></i><span> Volver al editor</span></a>
+            <a class="ed-btn ed-btn-ghost" href="{{ url_for('admin_vista_previa', pagina=pagina_actual) }}"><i class="fa-solid fa-desktop"></i><span> Ver en escritorio</span></a>
+            <a class="ed-btn ed-btn-sec" href="{{ url_for('admin_editor', pagina=pagina_actual) }}"><i class="fa-solid fa-pen"></i><span> Volver al editor</span></a>
             {% if hay_borrador %}
-            <form method="POST" action="{{ url_for('admin_editor_publicar') }}" style="display:inline;" onsubmit="return confirm('¿Publicar estos cambios? Se verán de inmediato en el sitio.');">
+            <form method="POST" action="{{ url_for('admin_editor_publicar') }}" style="display:inline;" onsubmit="return confirm('¿Publicar los cambios de todo el sitio? Se verán de inmediato.');">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="pagina" value="{{ pagina_actual }}">
                 <button class="ed-btn ed-btn-pri" type="submit"><i class="fa-solid fa-upload"></i><span> Publicar</span></button>
             </form>
             {% endif %}
@@ -30,7 +32,7 @@
     </div>
 
     <div class="ed-telefono">
-        <iframe src="{{ url_for('admin_vista_previa', embed=1) }}" title="Vista previa en celular"></iframe>
+        <iframe src="{{ url_for('admin_vista_previa', pagina=pagina_actual, embed=1) }}" title="Vista previa en celular"></iframe>
     </div>
 </body>
 </html>

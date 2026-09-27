@@ -1,0 +1,20 @@
+{% set d = s.datos %}
+<section class="nosotros-page">
+  <span class="section-tag reveal">{{ ed(s, 'etiqueta', d.etiqueta) }}</span>
+  <h2 class="section-title reveal">{{ ed(s, 'titulo_linea1', d.titulo_linea1) }}<br>{{ ed(s, 'titulo_linea2', d.titulo_linea2) }}</h2>
+  <div class="equipo-grid">
+    {% for persona in d.personas %}
+    {% set i = loop.index0 %}
+    <div class="equipo-card reveal">
+      <div class="equipo-avatar">
+        <i class="fa {{ persona.icono_fa }}" style="color:var(--gold);"></i>
+      </div>
+      <h3>{{ ed(s, 'personas.' ~ i ~ '.nombre', persona.nombre) }}</h3>
+      <p class="role">{{ ed(s, 'personas.' ~ i ~ '.cargo', persona.cargo) }}</p>
+      {% if persona.descripcion or modo_edicion %}
+        <p>{{ ed(s, 'personas.' ~ i ~ '.descripcion', persona.descripcion) }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>

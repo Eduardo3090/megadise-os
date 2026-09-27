@@ -1,0 +1,8 @@
+{% set d = s.datos %}
+<section style="background:var(--gold); padding:5rem 5vw; text-align:center;">
+  <h2 class="section-title reveal" style="color:var(--ink);">{{ ed(s, 'titulo', d.titulo) }}</h2>
+  <p class="reveal" style="color:rgba(0,0,0,.6); margin-bottom:2rem; max-width:40ch; margin-left:auto; margin-right:auto;">{{ ed(s, 'texto', d.texto) }}</p>
+  <a href="{{ d.boton_link }}" class="reveal" style="background:var(--ink);color:#fff;padding:.9rem 2.2rem;text-decoration:none;font-weight:700;letter-spacing:.06em;display:inline-block;transition:opacity .2s;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'"{{ ed_link(s, 'boton_link') }}>
+    {{ ed(s, 'boton_texto', d.boton_texto) }}
+  </a>
+</section>

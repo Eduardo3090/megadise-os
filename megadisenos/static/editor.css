@@ -103,6 +103,10 @@ body.ed-modo nav, body.ed-modo-previa nav { top: var(--ed-alto-barra) !important
 /* Los botones siguen viéndose como botones, pero no navegan */
 body.ed-modo a { cursor: default; }
 
+/* Las capas decorativas del sitio (brillos, degradados sobre tarjetas, etc.)
+   no deben tapar los textos ni las imágenes que se quieren editar. */
+body.ed-modo *::before, body.ed-modo *::after { pointer-events: none; }
+
 /* ── Imágenes, enlaces y estrellas ────────────────────── */
 [data-ed-img] { position: relative; cursor: pointer; }
 [data-ed-img] img { transition: filter .15s, outline-color .15s; outline: 2px solid transparent; outline-offset: -2px; }
@@ -194,6 +198,37 @@ body.ed-modo a { cursor: default; }
 .ed-oculta > :not(.ed-seccion-fija) { opacity: .35; filter: grayscale(.7); }
 .ed-oculta .ed-seccion-barra { opacity: 1; transform: none; pointer-events: auto; }
 
+/* Pie de página: se edita igual, pero avisa que se repite en todas las páginas */
+.ed-pie { position: relative; }
+.ed-pie::before {
+  content: attr(data-nombre);
+  position: absolute; top: 10px; left: 12px; z-index: 5;
+  padding: .3rem .65rem; border-radius: 4px;
+  background: var(--sl-ink); color: var(--sl-naranjo-claro);
+  border: 1px solid rgba(var(--sl-naranjo-rgb), .45);
+  font: 600 .74rem var(--sl-sans);
+  opacity: 0; transition: opacity .15s; pointer-events: none;
+}
+.ed-pie:hover::before { opacity: 1; }
+.ed-pie:hover { outline: 2px solid rgba(var(--sl-naranjo-rgb), .85); outline-offset: -2px; }
+
+/* Selector de página en la barra */
+.ed-selector {
+  position: relative; display: inline-flex; align-items: center; gap: .45rem; flex-shrink: 0;
+  height: 34px; padding: 0 2rem 0 .75rem; box-sizing: border-box;
+  border: 1.5px solid rgba(var(--sl-crema-rgb), .22); border-radius: 4px;
+  color: rgba(var(--sl-crema-rgb), .7); cursor: pointer;
+  transition: border-color .18s;
+}
+.ed-selector:hover, .ed-selector:focus-within { border-color: var(--sl-naranjo); }
+.ed-selector select {
+  appearance: none; -webkit-appearance: none; border: 0; outline: 0; cursor: pointer;
+  background: transparent; color: var(--sl-crema);
+  font: 600 .84rem var(--sl-sans); padding: 0; margin: 0;
+}
+.ed-selector select option { background: var(--sl-ink); color: var(--sl-crema); }
+.ed-selector-flecha { position: absolute; right: .7rem; font-size: .7rem; pointer-events: none; }
+
 /* ── Ayuda y avisos ───────────────────────────────────── */
 .ed-ayuda {
   position: fixed; left: 16px; bottom: 16px; z-index: 1990; box-sizing: border-box;
@@ -241,8 +276,11 @@ body.ed-previa-movil {
 .ed-telefono iframe { width: 100%; height: 100%; border: 0; display: block; }
 
 /* ── Pantallas medianas: se acorta el título ──────────── */
-@media (max-width: 1100px) {
+@media (max-width: 1280px) {
   .ed-titulo-sitio { display: none; }
+}
+@media (max-width: 1100px) {
+  .ed-titulo, .ed-separador { display: none; }
 }
 
 /* ── Pantallas chicas: solo íconos en la barra ────────── */
@@ -250,7 +288,10 @@ body.ed-previa-movil {
   .ed-barra { padding: 0 10px; gap: .4rem; }
   .ed-barra-izq { min-width: 0; overflow: hidden; gap: .5rem; }
   .ed-barra-der { gap: .2rem; flex-shrink: 0; }
-  .ed-btn span, .ed-estado, .ed-titulo, .ed-separador { display: none; }
+  .ed-btn span, .ed-estado, .ed-titulo, .ed-separador, .ed-selector > i:first-child { display: none; }
+  .ed-selector { padding: 0 .55rem; height: 32px; min-width: 0; }
+  .ed-selector-flecha { display: none; }
+  .ed-selector select { font-size: .78rem; max-width: 112px; text-overflow: ellipsis; }
   .ed-btn { padding: 0 .6rem; }
   .ed-marca img { height: 22px; }
   .ed-seccion-barra { left: 8px; max-width: calc(100vw - 16px); flex-wrap: wrap; }

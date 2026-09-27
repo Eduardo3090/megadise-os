@@ -102,77 +102,29 @@ def guardar_email(email, ip):
         return False
 
 # ── RUTAS ──────────────────────────────────────────────
+def _render_pagina(pagina):
+    """Muestra una página pública con su contenido publicado."""
+    plantilla = content_store.PAGINAS_POR_CLAVE[pagina][3]
+    secciones = content_store.obtener_secciones(pagina, solo_visibles=True)
+    return render_template(plantilla, secciones=secciones)
+
+
 @app.route('/')
 def index():
-    secciones = content_store.obtener_secciones('inicio', solo_visibles=True)
-    return render_template('index.html', secciones=secciones)
+    return _render_pagina('inicio')
 
 @app.route('/nosotros')
 def nosotros():
-    equipo = [
-        {
-            "nombre": "Laura Rosado",
-            "cargo": "Gerente general y diseñadora gráfica",
-            "descripcion": "Fundadora de Megadiseños",
-            "icono": "fa-user-tie"
-        },
-    ]
-    proyecciones = {
-        "clientes_satisfechos": 100,
-        "trabajos_entregados":  100,
-        "años_experiencia":     7,
-        "proyectos_por_mes":    5,
-    }
-    return render_template('nosotros.html', equipo=equipo, proyecciones=proyecciones)
+    return _render_pagina('nosotros')
 
 @app.route('/servicios')
 def servicios():
-    servicios_por_cliente = {
-        "Gran Formato": {
-            "icono": "🖼️",
-            "descripcion": "Pendones, rollers y gigantografías de alto impacto",
-            "servicios": ["Pendones y rollers", "Gigantografías"]
-        },
-        "Vinilos y Adhesivos": {
-            "icono": "🏷️",
-            "descripcion": "Vinilos y adhesivos publicitarios para tu marca",
-            "servicios": ["Vinilos publicitarios", "Adhesivos publicitarios", "Empavonados"]
-        },
-        "Papelería Corporativa": {
-            "icono": "📄",
-            "descripcion": "Papelería y talonarios para tu empresa",
-            "servicios": ["Papelería corporativa", "Talonarios", "Agendas corporativas"]
-        },
-        "Diseño Gráfico": {
-            "icono": "🎨",
-            "descripcion": "Diseño gráfico profesional para cada proyecto",
-            "servicios": ["Diseño gráfico profesional"]
-        },
-        "Regalos Empresariales": {
-            "icono": "🎁",
-            "descripcion": "Artículos personalizados para tu empresa",
-            "servicios": ["Regalos empresariales", "Sublimación"]
-        },
-        "Grabado y Lamicoide": {
-            "icono": "⚙️",
-            "descripcion": "Grabado láser y lamicoide de precisión",
-            "servicios": ["Grabado láser", "Lamicoide"]
-        },
-    }
-    return render_template('servicios.html', servicios=servicios_por_cliente)
+    return _render_pagina('servicios')
 
 @app.route('/portafolio')
 def portafolio():
-    proyectos = [
-        {"nombre": "Gigantografías estatales", "categoria": "Gran Formato",         "imagen": "proyecto-gigantografia-estatal.jpg"},
-        {"nombre": "Empavonados",              "categoria": "Vinilos y Adhesivos",  "imagen": "proyecto-empavonado.jpg"},
-        {"nombre": "Agendas corporativas",     "categoria": "Papelería",            "imagen": "proyecto-agendas.jpg"},
-        {"nombre": "Impresión offset",         "categoria": "Impresión",            "imagen": "imprenta-offset.jpg"},
-        {"nombre": "Impresión digital",        "categoria": "Impresión",            "imagen": "impresion-rodillos.jpg"},
-        {"nombre": "Gran formato",             "categoria": "Gran Formato",         "imagen": "gran-formato.jpg"},
-    ]
-    return render_template('portafolio.html', proyectos=proyectos)
-    
+    return _render_pagina('portafolio')
+
 @app.route('/contactanos', methods=['GET', 'POST'])
 def contactanos():
     if request.method == 'POST':
@@ -259,7 +211,7 @@ def contactanos():
         except Exception as e:
             return jsonify({"exito": False, "mensaje": str(e)})
 
-    return render_template('contactanos.html')
+    return _render_pagina('contactanos')
 
 @app.route('/privacidad')
 def privacidad():
@@ -353,7 +305,7 @@ def eliminar_datos():
 
 @app.route('/funciones-futuras')
 def funciones_futuras():
-    return render_template('funciones_futuras.html')
+    return _render_pagina('funciones')
 
 # ── PANEL DE EDICIÓN (/admin) ──────────────────────────
 import seccion_formulario
@@ -365,7 +317,20 @@ def _admin_context():
         "csrf_token": generar_csrf_token(),
         "nombres_tipo": content_store.NOMBRES_TIPO,
         "disco_persistente": rutas.USANDO_DISCO_PERSISTENTE,
+        "paginas_editables": content_store.PAGINAS,
     }
+
+
+@app.context_processor
+def _contexto_pie():
+    """El pie de página y los botones flotantes se muestran en todas las páginas."""
+    borrador = bool(getattr(g, 'modo_edicion', False) or getattr(g, 'modo_previa', False)
+                    or getattr(g, 'modo_embed', False))
+    pie = content_store.obtener_secciones('global', borrador=borrador)
+    if pie:
+        return {"pie": pie[0]}
+    return {"pie": {"id": 0, "tipo": "pie", "visible": 1, "orden": 1,
+                    "datos": content_store.CONTENIDO_GLOBAL[0]["datos"]}}
 
 
 def _validar_csrf_json():
@@ -378,7 +343,8 @@ def _validar_csrf_json():
 def admin_dashboard():
     secciones = content_store.obtener_secciones('inicio', borrador=True)
     return render_template('admin/dashboard.html', secciones=secciones,
-                           hay_borrador=content_store.hay_borrador('inicio'))
+                           tipos_formulario=seccion_formulario.CAMPOS_SECCION,
+                           hay_borrador=content_store.hay_borrador())
 
 
 @app.route('/admin/configurar', methods=['GET', 'POST'])
@@ -437,26 +403,41 @@ def admin_logout():
 
 
 # ── Editor visual ─────────────────────────────────────────
+def _pagina_valida(pagina):
+    if pagina not in content_store.PAGINAS_POR_CLAVE:
+        abort(404)
+    return content_store.PAGINAS_POR_CLAVE[pagina]
+
+
 @app.route('/admin/editor')
+@app.route('/admin/editor/<pagina>')
 @login_required
-def admin_editor():
+def admin_editor(pagina='inicio'):
+    info = _pagina_valida(pagina)
     g.modo_edicion = True
-    secciones = content_store.obtener_secciones('inicio', borrador=True)
-    return render_template('index.html', secciones=secciones,
-                           estado_editor=secciones,
-                           hay_borrador=content_store.hay_borrador('inicio'))
+    secciones = content_store.obtener_secciones(pagina, borrador=True)
+    pie = content_store.obtener_secciones('global', borrador=True)
+    return render_template(info[3], secciones=secciones,
+                           estado_editor=secciones + pie,
+                           pagina_actual=pagina,
+                           hay_borrador=content_store.hay_borrador())
 
 
 @app.route('/admin/vista-previa')
+@app.route('/admin/vista-previa/<pagina>')
 @login_required
-def admin_vista_previa():
+def admin_vista_previa(pagina='inicio'):
+    info = _pagina_valida(pagina)
     if request.args.get('dispositivo') == 'movil':
-        return render_template('admin/previa_movil.html',
-                               hay_borrador=content_store.hay_borrador('inicio'))
-    g.modo_previa = request.args.get('embed') != '1'
-    secciones = content_store.obtener_secciones('inicio', solo_visibles=True, borrador=True)
-    return render_template('index.html', secciones=secciones,
-                           hay_borrador=content_store.hay_borrador('inicio'))
+        return render_template('admin/previa_movil.html', pagina_actual=pagina,
+                               hay_borrador=content_store.hay_borrador())
+    if request.args.get('embed') == '1':
+        g.modo_embed = True
+    else:
+        g.modo_previa = True
+    secciones = content_store.obtener_secciones(pagina, solo_visibles=True, borrador=True)
+    return render_template(info[3], secciones=secciones, pagina_actual=pagina,
+                           hay_borrador=content_store.hay_borrador())
 
 
 @app.route('/admin/editor/guardar', methods=['POST'])
@@ -464,10 +445,14 @@ def admin_vista_previa():
 def admin_editor_guardar():
     _validar_csrf_json()
     data = request.get_json(silent=True) or {}
-    actuales = content_store.obtener_secciones('inicio', borrador=True)
-    limpias = editor_visual.validar_estado(actuales, data.get('secciones'))
-    content_store.guardar_borrador('inicio', limpias)
-    return jsonify({"ok": True, "hay_borrador": content_store.hay_borrador('inicio')})
+    pagina = data.get('pagina', 'inicio')
+    _pagina_valida(pagina)
+    enviadas = data.get('secciones')
+    for grupo in (pagina, 'global'):
+        actuales = content_store.obtener_secciones(grupo, borrador=True)
+        limpias = editor_visual.validar_estado(actuales, enviadas)
+        content_store.guardar_borrador(grupo, limpias)
+    return jsonify({"ok": True, "hay_borrador": content_store.hay_borrador()})
 
 
 @app.route('/admin/editor/imagen', methods=['POST'])
@@ -494,19 +479,22 @@ def admin_editor_imagen():
 def admin_editor_publicar():
     if request.is_json:
         _validar_csrf_json()
-        content_store.publicar_borrador('inicio')
+        content_store.publicar_borrador()
         return jsonify({"ok": True})
     validar_csrf(request.form)
-    content_store.publicar_borrador('inicio')
+    content_store.publicar_borrador()
     flash('¡Cambios publicados! Ya se ven en el sitio.', 'exito')
-    return redirect(url_for('admin_editor'))
+    pagina = request.form.get('pagina', 'inicio')
+    if pagina not in content_store.PAGINAS_POR_CLAVE:
+        pagina = 'inicio'
+    return redirect(url_for('admin_editor', pagina=pagina))
 
 
 @app.route('/admin/editor/descartar', methods=['POST'])
 @login_required
 def admin_editor_descartar():
     _validar_csrf_json()
-    content_store.descartar_borrador('inicio')
+    content_store.descartar_borrador()
     return jsonify({"ok": True})
 
 

@@ -1,0 +1,14 @@
+{% set d = s.datos %}
+<section style="background:var(--paper); padding:6rem 5vw; text-align:center;">
+  <span class="section-tag reveal" style="color: var(--green);">{{ ed(s, 'etiqueta', d.etiqueta) }}</span>
+  <h2 class="section-title reveal">{{ ed(s, 'titulo_linea1', d.titulo_linea1) }}<br>{{ ed(s, 'titulo_linea2', d.titulo_linea2) }}</h2>
+  <div class="stats-grid reveal" style="margin:3rem auto 0; max-width:800px;">
+    {% for it in d.lista %}
+    {% set i = loop.index0 %}
+    <div class="stat-card">
+      <span class="stat-num">{{ ed(s, 'lista.' ~ i ~ '.numero', it.numero) }}</span>
+      <span class="stat-label">{{ ed(s, 'lista.' ~ i ~ '.etiqueta', it.etiqueta) }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</section>

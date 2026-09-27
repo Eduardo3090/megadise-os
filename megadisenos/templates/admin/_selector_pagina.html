@@ -1,0 +1,10 @@
+{# Selector de página para las barras del editor. `destino` = 'admin_editor' o 'admin_vista_previa' #}
+<label class="ed-selector" title="Cambiar de página">
+    <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+    <select id="edPagina" aria-label="Página a editar"{% if destino != 'admin_editor' %} onchange="window.location = this.value"{% endif %}>
+        {% for clave, nombre, ruta, plantilla in paginas_editables %}
+        <option value="{{ url_for(destino, pagina=clave, **extra_url) }}"{% if clave == pagina_actual %} selected{% endif %}>{{ nombre }}</option>
+        {% endfor %}
+    </select>
+    <i class="fa-solid fa-chevron-down ed-selector-flecha" aria-hidden="true"></i>
+</label>

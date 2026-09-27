@@ -1,0 +1,26 @@
+{% set d = s.datos %}
+<section class="contacto-page" style="padding-top:0;">
+  <div class="reveal" style="max-width:640px; margin:0 auto; background:var(--card); border-top:4px solid var(--gold); padding:2.5rem;">
+    <h3 style="font-family:var(--serif); font-size:1.6rem; margin-bottom:.5rem; text-align:center;">{{ ed(s, 'titulo', d.titulo) }}</h3>
+    <p style="color:var(--gray); font-size:.9rem; margin-bottom:2rem; text-align:center;">{{ ed(s, 'texto', d.texto) }}</p>
+
+    <div style="display:grid; gap:1rem;">
+      {% for campo, etiqueta in [('banco', 'Banco'), ('cuenta', 'Cuenta Corriente'), ('rut', 'RUT'), ('titular', 'Titular'), ('correo_aviso', 'Correo de aviso')] %}
+      <div style="display:flex; justify-content:space-between; align-items:center;{% if not loop.last %} border-bottom:1px solid #e0d9cf; padding-bottom:.7rem;{% endif %}">
+        <div>
+          <strong style="display:block; font-size:.78rem; color:var(--gray); text-transform:uppercase; letter-spacing:.04em;">{{ etiqueta }}</strong>
+          <span id="dato-{{ {'correo_aviso': 'mail'}.get(campo, campo) }}">{{ ed(s, campo, d[campo]) }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <button type="button" id="btn-copiar-todo" onclick="copiarTodosDatosPago(this)" class="btn-primary" style="width:100%; border:none; cursor:pointer; margin-top:1.8rem;">
+      {{ ed(s, 'boton_texto', d.boton_texto) }}
+    </button>
+
+    <p style="color:var(--gray); font-size:.82rem; margin-top:1.2rem; text-align:center;">
+      {{ ed(s, 'nota_inicio', d.nota_inicio) }} <strong>{{ ed(s, 'nota_correo', d.nota_correo) }}</strong> {{ ed(s, 'nota_fin', d.nota_fin) }}
+    </p>
+  </div>
+</section>

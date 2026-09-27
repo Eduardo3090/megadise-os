@@ -3,7 +3,7 @@
 {% block contenido %}
 <div class="admin-header-row">
     <div>
-        <h1>Página de inicio</h1>
+        <h1>Tu sitio</h1>
         <p class="admin-subtext">
             {% if hay_borrador %}
                 Tienes <strong>cambios sin publicar</strong>. Revísalos en la vista previa y publícalos desde el editor.
@@ -23,20 +23,30 @@
 <div class="admin-card" style="margin-bottom:1.5rem;">
     <h3 class="admin-subheading" style="margin-top:0;">Editor visual (recomendado)</h3>
     <p class="admin-subtext" style="margin-bottom:1.2rem;">
-        Edita directamente sobre la página, tal como la ven tus clientes. Haz clic en un texto para escribir,
+        Edita directamente sobre cada página, tal como la ven tus clientes. Haz clic en un texto para escribir,
         en una imagen para cambiarla, y mueve u oculta secciones. Nada se publica hasta que tú lo decidas.
     </p>
-    <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
-        <a href="{{ url_for('admin_editor') }}" class="admin-btn admin-btn-primary"><i class="fa-solid fa-pen-ruler"></i> Abrir editor visual</a>
-        <a href="{{ url_for('admin_vista_previa') }}" class="admin-btn admin-btn-secondary" target="_blank"><i class="fa-solid fa-eye"></i> Vista previa</a>
-    </div>
+    <ul class="admin-secciones-lista">
+        {% for clave, nombre, ruta, plantilla in paginas_editables %}
+        <li class="admin-seccion-item">
+            <div class="admin-seccion-info">
+                <span class="admin-seccion-nombre">{{ nombre }}</span>
+                <span class="admin-seccion-estado">{{ ruta }}</span>
+            </div>
+            <div class="admin-seccion-acciones">
+                <a href="{{ url_for('admin_vista_previa', pagina=clave) }}" class="admin-btn admin-btn-ghost" target="_blank"><i class="fa-solid fa-eye"></i> Vista previa</a>
+                <a href="{{ url_for('admin_editor', pagina=clave) }}" class="admin-btn admin-btn-primary"><i class="fa-solid fa-pen-ruler"></i> Editar</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
 </div>
 
-<h3 class="admin-subheading">Modo formulario</h3>
-<p class="admin-subtext" style="margin-bottom:1rem;">Si prefieres, también puedes editar cada bloque con un formulario. Los cambios quedan igual como borrador.</p>
+<h3 class="admin-subheading">Modo formulario · Inicio</h3>
+<p class="admin-subtext" style="margin-bottom:1rem;">Si prefieres, también puedes editar los bloques de la página de inicio con un formulario. Los cambios quedan igual como borrador.</p>
 
 <ul class="admin-secciones-lista">
-    {% for s in secciones %}
+    {% for s in secciones if s.tipo in tipos_formulario %}
     <li class="admin-seccion-item {% if not s.visible %}admin-seccion-oculta{% endif %}">
         <div class="admin-seccion-info">
             <span class="admin-seccion-nombre">{{ nombres_tipo[s.tipo] }}</span>

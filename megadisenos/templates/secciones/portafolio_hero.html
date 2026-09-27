@@ -1,0 +1,10 @@
+{% set d = s.datos %}
+<div class="page-hero portfolio-hero">
+  <div class="page-hero-inner">
+    <span class="section-tag">{{ ed(s, 'etiqueta', d.etiqueta) }}</span>
+    <h1 class="portfolio-title">
+      Portaf<img src="{{ url_for('static', filename='logotipo.png') }}" alt="o" class="portfolio-o">lio
+    </h1>
+    <p>{{ ed(s, 'texto', d.texto) }}</p>
+  </div>
+</div>

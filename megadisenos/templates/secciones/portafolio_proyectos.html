@@ -1,0 +1,22 @@
+{% set d = s.datos %}
+<section style="background: var(--paper);">
+  <span class="section-tag reveal" style="color: var(--teal);">{{ ed(s, 'etiqueta', d.etiqueta) }}</span>
+  <h2 class="section-title reveal">{{ ed(s, 'titulo', d.titulo) }}</h2>
+  <p class="section-sub reveal">{{ ed(s, 'subtitulo', d.subtitulo) }}</p>
+
+  <div class="prox-grid" style="margin-top:3.5rem;">
+    {% for proyecto in d.lista %}
+    {% set i = loop.index0 %}
+    <div class="prox-card reveal" style="padding:0; overflow:hidden; text-align:left;">
+      <picture{{ ed_img(s, 'lista.' ~ i ~ '.imagen') }}>
+        <source srcset="{{ url_imagen(proyecto.imagen, '.webp') }}" type="image/webp">
+        <img loading="lazy" src="{{ url_imagen(proyecto.imagen, '.jpg') }}" alt="{{ proyecto.nombre }}" style="width:100%; aspect-ratio:4/3; object-fit:cover; display:block;">
+      </picture>
+      <div style="padding:1.5rem;">
+        <span class="badge badge-gold" style="margin-bottom:.6rem;">{{ ed(s, 'lista.' ~ i ~ '.categoria', proyecto.categoria) }}</span>
+        <h3>{{ ed(s, 'lista.' ~ i ~ '.nombre', proyecto.nombre) }}</h3>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>

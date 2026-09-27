@@ -94,7 +94,12 @@
     });
   }
 
-  function programarGuardado() {
+  // Solo se envían las secciones que cambiaron. Así, si hay dos pestañas del
+  // editor abiertas, una no pisa lo que se guardó desde la otra.
+  const sucias = new Set();
+
+  function programarGuardado(ids) {
+    [].concat(ids || []).forEach(id => sucias.add(String(id)));
     pendiente = true;
     pintarEstado('Guardando…', 'ed-pendiente');
     clearTimeout(timerGuardar);
@@ -107,7 +112,12 @@
     if (!pendiente) return;
     pendiente = false;
     ordenActual();
-    const cuerpo = JSON.stringify({ secciones: Object.values(estado) });
+    const ids = Array.from(sucias);
+    sucias.clear();
+    const cuerpo = JSON.stringify({
+      pagina: CFG.pagina,
+      secciones: ids.map(id => estado[id]).filter(Boolean)
+    });
     guardando = llamar(CFG.urls.guardar, {
       method: 'POST',
       headers: { 'X-CSRF-Token': CFG.csrf, 'Content-Type': 'application/json' },
@@ -117,6 +127,7 @@
       if (!pendiente) pintarEstadoNormal();
     }).catch(err => {
       pendiente = true;
+      ids.forEach(id => sucias.add(id));
       pintarEstado('⚠ No se pudo guardar', 'ed-error');
       avisar(mensajeError(err), 'error');
       throw err;
@@ -134,14 +145,14 @@
       const s = seccionDe(el);
       if (!s) return;
       fijarRuta(s.datos, el.dataset.ruta, el.textContent);
-      programarGuardado();
+      programarGuardado(s.id);
     });
     el.addEventListener('blur', () => {
       const limpio = el.textContent.replace(/\s+/g, ' ').trim();
       if (limpio !== el.textContent) {
         el.textContent = limpio;
         const s = seccionDe(el);
-        if (s) { fijarRuta(s.datos, el.dataset.ruta, limpio); programarGuardado(); }
+        if (s) { fijarRuta(s.datos, el.dataset.ruta, limpio); programarGuardado(s.id); }
       }
     });
     el.addEventListener('keydown', e => {
@@ -198,7 +209,7 @@
       picture.querySelectorAll('source').forEach(src => { src.srcset = data.webp; });
       const img = picture.querySelector('img');
       if (img) img.src = data.jpg;
-      if (s) { fijarRuta(s.datos, ruta, data.base); programarGuardado(); }
+      if (s) { fijarRuta(s.datos, ruta, data.base); programarGuardado(s.id); }
       avisar('Imagen cambiada ✓', 'exito');
     } catch (err) {
       avisar(mensajeError(err), 'error');
@@ -259,7 +270,7 @@
     }
     const s = seccionDe(linkActual);
     linkActual.setAttribute('href', valor);
-    if (s) { fijarRuta(s.datos, linkActual.dataset.edLink, valor); programarGuardado(); }
+    if (s) { fijarRuta(s.datos, linkActual.dataset.edLink, valor); programarGuardado(s.id); }
     cerrarLink();
     avisar('Enlace actualizado ✓', 'exito');
   }
@@ -332,10 +343,36 @@
     else abrirLink(el);
   });
 
+  // ── Cambiar de página ─────────────────────────────────
+  // Antes de salir se guarda el borrador, para no perder nada.
+  async function irA(url) {
+    try { await guardarAhora(); } catch (err) { return; }
+    window.location = url;
+  }
+  const $selector = document.getElementById('edPagina');
+  if ($selector) {
+    $selector.addEventListener('change', () => irA($selector.value));
+  }
+  function destinoEditor(link) {
+    const ruta = (link.getAttribute('href') || '').split('#')[0].split('?')[0];
+    return Object.prototype.hasOwnProperty.call(CFG.paginas, ruta) ? CFG.paginas[ruta] : null;
+  }
+
   // ── Bloquear la navegación normal del sitio ───────────
   // En el editor, hacer clic en un botón o enlace NO debe salir de la página.
+  // Los enlaces del menú del sitio llevan al editor de esa página.
   document.addEventListener('click', e => {
     if (e.target.closest('.ed-ui, .ed-seccion-fija')) return;
+
+    const linkMenu = e.target.closest('a[href]:not([data-ed-link])');
+    if (linkMenu && !e.target.closest('.ed-texto')) {
+      const destino = destinoEditor(linkMenu);
+      if (destino) {
+        e.preventDefault(); e.stopPropagation();
+        if (destino.split('?')[0] !== window.location.pathname) irA(destino);
+        return;
+      }
+    }
 
     const estrella = e.target.closest('[data-ed-estrellas] i[data-n]');
     if (estrella) {
@@ -344,7 +381,7 @@
       const n = Number(estrella.dataset.n);
       marcarEstrellas(bloque, n);
       const s = seccionDe(bloque);
-      if (s) { fijarRuta(s.datos, bloque.dataset.edEstrellas, n); programarGuardado(); }
+      if (s) { fijarRuta(s.datos, bloque.dataset.edEstrellas, n); programarGuardado(s.id); }
       return;
     }
 
@@ -403,7 +440,10 @@
       }
       actualizarBotonesOrden();
       if (b.dataset.accion !== 'ocultar') el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      programarGuardado();
+      // Al mover, cambia el orden de todas las secciones de la página
+      programarGuardado(b.dataset.accion === 'ocultar'
+        ? el.dataset.sec
+        : Array.from(document.querySelectorAll('.ed-seccion')).map(x => x.dataset.sec));
     });
   });
   actualizarBotonesOrden();

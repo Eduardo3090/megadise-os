@@ -32,6 +32,9 @@ LARGO_MAXIMO_TEXTO = 2000
 PATRON_IMAGEN = re.compile(r"^(media/)?[a-z0-9-]+$")
 PREFIJOS_LINK_PERMITIDOS = ("/", "#", "https://", "http://", "mailto:", "tel:")
 
+# Campos técnicos que el editor nunca puede cambiar (clases CSS, íconos del sistema)
+CAMPOS_PROTEGIDOS = {"clase", "icono_fa", "badge_estilo"}
+
 
 # ── 1. FUNCIONES PARA LAS PLANTILLAS ──────────────────────
 def modo_edicion():
@@ -86,6 +89,7 @@ def registrar(app):
             "editor_url_marca": URL_MARCA,
             "modo_edicion": modo_edicion(),
             "modo_previa": bool(getattr(g, "modo_previa", False)),
+            "modo_embed": bool(getattr(g, "modo_embed", False)),
         }
 
 
@@ -113,7 +117,8 @@ def _imagen_segura(valor, original):
 def _fusionar(original, nuevo, clave=""):
     if isinstance(original, dict):
         nuevo = nuevo if isinstance(nuevo, dict) else {}
-        return {k: _fusionar(v, nuevo.get(k, v), k) for k, v in original.items()}
+        return {k: (v if k in CAMPOS_PROTEGIDOS else _fusionar(v, nuevo.get(k, v), k))
+                for k, v in original.items()}
 
     if isinstance(original, list):
         nuevo = nuevo if isinstance(nuevo, list) else []

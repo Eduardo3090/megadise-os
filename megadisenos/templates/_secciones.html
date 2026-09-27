@@ -1,0 +1,11 @@
+{# Dibuja las secciones de una página. En el editor, cada una va envuelta
+   para poder moverla u ocultarla. En el sitio público no agrega nada. #}
+{% for s in secciones %}
+    {% if modo_edicion %}
+    <div class="ed-seccion{% if not s.visible %} ed-oculta{% endif %}" data-sec="{{ s.id }}" data-nombre="{{ nombres_tipo.get(s.tipo, 'Sección') }}">
+    {% endif %}
+    {% include 'secciones/' ~ s.tipo ~ '.html' %}
+    {% if modo_edicion %}
+    </div>
+    {% endif %}
+{% endfor %}

@@ -1,0 +1,8 @@
+{% set d = s.datos %}
+<div class="page-hero {{ d.clase }}">
+  <div class="page-hero-inner">
+    <span class="section-tag">{{ ed(s, 'etiqueta', d.etiqueta) }}</span>
+    <h1>{{ ed(s, 'titulo_linea1', d.titulo_linea1) }}{% if d.titulo_linea2 %}<br>{{ ed(s, 'titulo_linea2', d.titulo_linea2) }}{% endif %}</h1>
+    <p>{{ ed(s, 'texto', d.texto) }}</p>
+  </div>
+</div>

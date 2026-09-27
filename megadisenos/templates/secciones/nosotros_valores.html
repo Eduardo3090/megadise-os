@@ -1,0 +1,15 @@
+{% set d = s.datos %}
+<section class="nosotros-page">
+  <span class="section-tag reveal">{{ ed(s, 'etiqueta', d.etiqueta) }}</span>
+  <h2 class="section-title reveal">{{ ed(s, 'titulo', d.titulo) }}</h2>
+  <div class="porque-grid" style="margin-top:3rem;">
+    {% for it in d.lista %}
+    {% set i = loop.index0 %}
+    <div class="porque-card reveal">
+      <div class="icon">{{ ed(s, 'lista.' ~ i ~ '.icono', it.icono) }}</div>
+      <h3>{{ ed(s, 'lista.' ~ i ~ '.titulo', it.titulo) }}</h3>
+      <p>{{ ed(s, 'lista.' ~ i ~ '.texto', it.texto) }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>

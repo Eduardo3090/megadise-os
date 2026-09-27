@@ -23,6 +23,7 @@
     <div class="ed-ui ed-barra" id="edBarra">
         <div class="ed-barra-izq">
             {% with titulo='Editor' %}{% include 'admin/_marca_editor.html' %}{% endwith %}
+            {% with destino='admin_editor', extra_url={} %}{% include 'admin/_selector_pagina.html' %}{% endwith %}
             <span class="ed-estado" id="edEstado" data-borrador="{{ 1 if hay_borrador else 0 }}">
                 {% if hay_borrador %}● Cambios sin publicar{% else %}✓ Todo publicado{% endif %}
             </span>
@@ -36,8 +37,9 @@
         </div>
     </div>
     <div class="ed-ui ed-ayuda" id="edAyuda">
-        <strong>Estás editando la página de inicio de {{ editor_nombre_sitio }}.</strong>
+        <strong>Estás editando el sitio de {{ editor_nombre_sitio }}.</strong>
         Haz clic en cualquier texto para escribir, en una imagen para cambiarla, o pasa el mouse sobre una sección para moverla u ocultarla.
+        Cambia de página con el selector de arriba o usando el menú del sitio.
         Los cambios se guardan solos como borrador y <strong>no se ven en el sitio hasta que aprietes Publicar</strong>.
         <button type="button" class="ed-ayuda-cerrar" id="edAyudaCerrar" aria-label="Cerrar">✕</button>
     </div>
@@ -51,16 +53,18 @@
     <div class="ed-ui ed-barra ed-barra-previa">
         <div class="ed-barra-izq">
             {% with titulo='Vista previa' %}{% include 'admin/_marca_editor.html' %}{% endwith %}
+            {% with destino='admin_vista_previa', extra_url={} %}{% include 'admin/_selector_pagina.html' %}{% endwith %}
             <span class="ed-estado">
                 {% if hay_borrador %}Así se verá el sitio cuando publiques{% else %}No hay cambios pendientes: esto es lo que ya está publicado{% endif %}
             </span>
         </div>
         <div class="ed-barra-der">
-            <a class="ed-btn ed-btn-ghost" href="{{ url_for('admin_vista_previa', dispositivo='movil') }}"><i class="fa-solid fa-mobile-screen"></i><span> Ver en celular</span></a>
-            <a class="ed-btn ed-btn-sec" href="{{ url_for('admin_editor') }}"><i class="fa-solid fa-pen"></i><span> Volver al editor</span></a>
+            <a class="ed-btn ed-btn-ghost" href="{{ url_for('admin_vista_previa', pagina=pagina_actual, dispositivo='movil') }}"><i class="fa-solid fa-mobile-screen"></i><span> Ver en celular</span></a>
+            <a class="ed-btn ed-btn-sec" href="{{ url_for('admin_editor', pagina=pagina_actual) }}"><i class="fa-solid fa-pen"></i><span> Volver al editor</span></a>
             {% if hay_borrador %}
-            <form method="POST" action="{{ url_for('admin_editor_publicar') }}" style="display:inline;" onsubmit="return confirm('¿Publicar estos cambios? Se verán de inmediato en el sitio.');">
+            <form method="POST" action="{{ url_for('admin_editor_publicar') }}" style="display:inline;" onsubmit="return confirm('¿Publicar los cambios de todo el sitio? Se verán de inmediato.');">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="pagina" value="{{ pagina_actual }}">
                 <button class="ed-btn ed-btn-pri" type="submit"><i class="fa-solid fa-upload"></i><span> Publicar</span></button>
             </form>
             {% endif %}
@@ -95,7 +99,8 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
+    {% set ps = pie %}{% set pd = pie.datos %}
+    <footer{% if modo_edicion %} class="ed-pie" data-nombre="Pie de página (se repite en todas las páginas)"{% endif %}>
         <picture>
             <source srcset="{{ url_for('static', filename='logo megadisenos.webp') }}" type="image/webp">
             <img
@@ -105,22 +110,22 @@
             >
         </picture>
         <p>
-            <a href="https://wa.me/56948623875" target="_blank" style="color: var(--gold2); text-decoration: none;">
-                📞 +56 9 4862 3875
+            <a href="{{ pd.whatsapp_link }}" target="_blank" style="color: var(--gold2); text-decoration: none;"{{ ed_link(ps, 'whatsapp_link') }}>
+                📞 {{ ed(ps, 'telefono', pd.telefono) }}
             </a>
-            &nbsp;|&nbsp; ✉️ ventasmegadisenos@gmail.com
+            &nbsp;|&nbsp; ✉️ {{ ed(ps, 'correo', pd.correo) }}
         </p>
-        <p>📍 Copiapó, Atacama, Chile</p>
+        <p>📍 {{ ed(ps, 'ubicacion', pd.ubicacion) }}</p>
         <div style="display:flex; gap:1.2rem; margin: .3rem 0;">
-            <a href="https://www.instagram.com/imprentamegadisenos/" target="_blank" style="color: var(--gold2); font-size:1.4rem;">
+            <a href="{{ pd.instagram_link }}" target="_blank" style="color: var(--gold2); font-size:1.4rem;"{{ ed_link(ps, 'instagram_link') }}>
                 <i class="fa fa-brands fa-instagram"></i>
             </a>
-            <a href="https://www.facebook.com/imprentamegadisenos?locale=es_LA" target="_blank" style="color: var(--gold2); font-size:1.4rem;">
+            <a href="{{ pd.facebook_link }}" target="_blank" style="color: var(--gold2); font-size:1.4rem;"{{ ed_link(ps, 'facebook_link') }}>
                 <i class="fa fa-brands fa-facebook"></i>
             </a>
         </div>
         <div class="footer-divider"></div>
-        <p>© 2026 Megadiseños — Todos los derechos reservados</p>
+        <p>{{ ed(ps, 'derechos', pd.derechos) }}</p>
         <p style="font-size:.75rem; margin-top:.4rem;">
             <a href="/privacidad" style="color:var(--gray); text-decoration:none;">
                 Política de Privacidad
@@ -129,7 +134,7 @@
     </footer>
 
     <!-- Botón flotante Instagram -->
-    <a href="https://www.instagram.com/imprentamegadisenos/" target="_blank"
+    <a href="{{ pd.instagram_link }}" target="_blank"
        style="position:fixed; bottom:150px; right:78px;
               background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
               color:#fff; border-radius:50%; width:48px; height:48px;
@@ -141,7 +146,7 @@
     </a>
 
     <!-- Botón flotante Facebook -->
-    <a href="https://www.facebook.com/imprentamegadisenos?locale=es_LA" target="_blank"
+    <a href="{{ pd.facebook_link }}" target="_blank"
        style="position:fixed; bottom:150px; right:20px; background:#1877F2;
               color:#fff; border-radius:50%; width:48px; height:48px;
               display:flex; align-items:center; justify-content:center;
@@ -152,7 +157,7 @@
     </a>
 
     <!-- Botón flotante WhatsApp -->
-    <a href="https://wa.me/56948623875" target="_blank"
+    <a href="{{ pd.whatsapp_link }}" target="_blank"
        style="position:fixed; bottom:90px; right:20px; background:#25D366;
               color:#fff; border-radius:50px; padding:.7rem 1.2rem;
               font-family: var(--body); font-size:.85rem; font-weight:700;
@@ -214,17 +219,38 @@
 <script>
     window.ED_CONFIG = {
         csrf: {{ csrf_token|tojson }},
+        pagina: {{ pagina_actual|tojson }},
         estado: {{ estado_editor|tojson }},
+        // ruta pública → dirección de esa página en el editor
+        paginas: {
+            {% for clave, nombre, ruta, plantilla in paginas_editables %}{{ ruta|tojson }}: {{ url_for('admin_editor', pagina=clave)|tojson }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+        },
         urls: {
             guardar: {{ url_for('admin_editor_guardar')|tojson }},
             imagen: {{ url_for('admin_editor_imagen')|tojson }},
             publicar: {{ url_for('admin_editor_publicar')|tojson }},
             descartar: {{ url_for('admin_editor_descartar')|tojson }},
-            previa: {{ url_for('admin_vista_previa')|tojson }}
+            previa: {{ url_for('admin_vista_previa', pagina=pagina_actual)|tojson }}
         }
     };
 </script>
 <script src="{{ url_for('static', filename='editor.js') }}"></script>
+{% elif modo_previa or modo_embed %}
+<script>
+    // En la vista previa, el menú del sitio lleva a la vista previa de cada página
+    // (y no al sitio publicado), para poder recorrer todo antes de publicar.
+    (function () {
+        var paginas = {
+            {% for clave, nombre, ruta, plantilla in paginas_editables %}{{ ruta|tojson }}: {{ url_for('admin_vista_previa', pagina=clave, **({'embed': 1} if modo_embed else {}))|tojson }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+        };
+        document.querySelectorAll('a[href]').forEach(function (a) {
+            var ruta = a.getAttribute('href');
+            if (Object.prototype.hasOwnProperty.call(paginas, ruta)) a.setAttribute('href', paginas[ruta]);
+        });
+    })();
+</script>
 {% endif %}
 </body>
 </html>
