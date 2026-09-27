@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Vista previa en celular · Megadiseños</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='editor.css') }}">
+</head>
+<body class="ed-previa-movil">
+    <div class="ed-ui ed-barra ed-barra-previa">
+        <div class="ed-barra-izq">
+            <span class="ed-logo">Vista previa <span>· Celular</span></span>
+            <span class="ed-estado">
+                {% if hay_borrador %}Así se verá el sitio cuando publiques{% else %}No hay cambios pendientes{% endif %}
+            </span>
+        </div>
+        <div class="ed-barra-der">
+            <a class="ed-btn ed-btn-ghost" href="{{ url_for('admin_vista_previa') }}"><i class="fa-solid fa-desktop"></i><span> Ver en escritorio</span></a>
+            <a class="ed-btn ed-btn-sec" href="{{ url_for('admin_editor') }}"><i class="fa-solid fa-pen"></i><span> Volver al editor</span></a>
+            {% if hay_borrador %}
+            <form method="POST" action="{{ url_for('admin_editor_publicar') }}" style="display:inline;" onsubmit="return confirm('¿Publicar estos cambios? Se verán de inmediato en el sitio.');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button class="ed-btn ed-btn-pri" type="submit"><i class="fa-solid fa-upload"></i><span> Publicar</span></button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="ed-telefono">
+        <iframe src="{{ url_for('admin_vista_previa', embed=1) }}" title="Vista previa en celular"></iframe>
+    </div>
+</body>
+</html>
