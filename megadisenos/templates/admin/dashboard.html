@@ -21,7 +21,7 @@
 {% endif %}
 
 <div class="admin-card" style="margin-bottom:1.5rem;">
-    <h3 class="admin-subheading" style="margin-top:0;">Editor visual (recomendado)</h3>
+    <h3 class="admin-subheading" style="margin-top:0;">Editor visual</h3>
     <p class="admin-subtext" style="margin-bottom:1.2rem;">
         Edita directamente sobre cada página, tal como la ven tus clientes. Haz clic en un texto para escribir,
         en una imagen para cambiarla, y mueve u oculta secciones. Nada se publica hasta que tú lo decidas.
@@ -41,25 +41,4 @@
         {% endfor %}
     </ul>
 </div>
-
-<h3 class="admin-subheading">Modo formulario · Inicio</h3>
-<p class="admin-subtext" style="margin-bottom:1rem;">Si prefieres, también puedes editar los bloques de la página de inicio con un formulario. Los cambios quedan igual como borrador.</p>
-
-<ul class="admin-secciones-lista">
-    {% for s in secciones if s.tipo in tipos_formulario %}
-    <li class="admin-seccion-item {% if not s.visible %}admin-seccion-oculta{% endif %}">
-        <div class="admin-seccion-info">
-            <span class="admin-seccion-nombre">{{ nombres_tipo[s.tipo] }}</span>
-            <span class="admin-seccion-estado">
-                {% if s.visible %}<i class="fa-solid fa-eye"></i> Visible{% else %}<i class="fa-solid fa-eye-slash"></i> Oculta{% endif %}
-            </span>
-        </div>
-        <div class="admin-seccion-acciones">
-            <a href="{{ url_for('admin_editar_seccion', seccion_id=s.id) }}" class="admin-btn admin-btn-secondary">
-                <i class="fa-solid fa-pen"></i> Editar
-            </a>
-        </div>
-    </li>
-    {% endfor %}
-</ul>
 {% endblock %}
