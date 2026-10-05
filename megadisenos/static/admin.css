@@ -63,14 +63,14 @@ a { color: inherit; }
   position: sticky; top: 0; z-index: 50;
 }
 .admin-logo {
-  font-family: var(--sl-serif); font-weight: 600; font-size: 1.3rem; letter-spacing: .01em;
-  color: var(--sl-crema); text-decoration: none;
-  display: inline-flex; align-items: center; gap: .65rem;
+  font-family: var(--sl-sans); font-size: .95rem; color: var(--sl-crema); text-decoration: none;
+  display: inline-flex; align-items: center; gap: .8rem;
 }
-.admin-logo span {
-  font-family: var(--sl-sans); font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--sl-naranjo); border: 1px solid rgba(242,100,25,.55); border-radius: 999px; padding: .18rem .6rem;
-}
+.admin-logo img { height: 28px; width: auto; display: block; }
+.admin-logo-sep { width: 1px; height: 24px; background: rgba(237,226,204,.22); display: block; }
+.admin-logo b { font-weight: 600; }
+.admin-logo em { font-style: normal; color: rgba(237,226,204,.6); margin-left: -.55rem; }
+@media (max-width: 640px) { .admin-logo em, .admin-logo-sep { display: none; } .admin-logo img { height: 22px; } }
 .admin-topnav { display: flex; gap: .25rem; flex-wrap: wrap; }
 .admin-topnav a {
   color: rgba(237,226,204,.78); text-decoration: none; font-size: .88rem; font-weight: 500;
