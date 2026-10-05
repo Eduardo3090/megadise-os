@@ -22,6 +22,7 @@ cliente edite algo desde el panel).
 import sqlite3
 import json
 import os
+import time
 import rutas
 
 DB_PATH = rutas.RUTA_CONTENIDO_DB
@@ -391,6 +392,15 @@ def init_db():
             password_hash TEXT NOT NULL
         )
     ''')
+    # Registro de eventos para limitar intentos (login, formularios públicos)
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS limite_eventos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            clave TEXT NOT NULL,
+            momento REAL NOT NULL
+        )
+    ''')
+    c.execute("CREATE INDEX IF NOT EXISTS idx_limite_clave ON limite_eventos (clave, momento)")
     conn.commit()
 
     # Migración: agrega las columnas del borrador si la base es antigua.
@@ -536,13 +546,25 @@ def existe_admin():
 
 
 def crear_admin(usuario, password_hash):
+    """Crea el administrador SOLO si todavía no existe ninguno (operación atómica).
+    Devuelve True si lo creó, False si ya había uno."""
     conn = get_conn()
-    conn.execute(
-        "INSERT INTO admin_usuario (usuario, password_hash) VALUES (?, ?)",
+    cur = conn.execute(
+        "INSERT INTO admin_usuario (usuario, password_hash) "
+        "SELECT ?, ? WHERE NOT EXISTS (SELECT 1 FROM admin_usuario)",
         (usuario, password_hash)
     )
     conn.commit()
+    creado = cur.rowcount == 1
     conn.close()
+    return creado
+
+
+def obtener_admin_por_id(admin_id):
+    conn = get_conn()
+    fila = conn.execute("SELECT * FROM admin_usuario WHERE id = ?", (admin_id,)).fetchone()
+    conn.close()
+    return dict(fila) if fila else None
 
 
 def obtener_admin_por_usuario(usuario):
@@ -555,5 +577,33 @@ def obtener_admin_por_usuario(usuario):
 def actualizar_password_admin(admin_id, password_hash):
     conn = get_conn()
     conn.execute("UPDATE admin_usuario SET password_hash = ? WHERE id = ?", (password_hash, admin_id))
+    conn.commit()
+    conn.close()
+
+
+# ── LÍMITE DE INTENTOS ────────────────────────────────────
+def contar_eventos(clave, ventana_seg):
+    """Cuántos eventos con esa clave hubo en los últimos `ventana_seg` segundos."""
+    conn = get_conn()
+    n = conn.execute(
+        "SELECT COUNT(*) FROM limite_eventos WHERE clave = ? AND momento > ?",
+        (clave, time.time() - ventana_seg)
+    ).fetchone()[0]
+    conn.close()
+    return n
+
+
+def registrar_evento(clave):
+    conn = get_conn()
+    ahora = time.time()
+    conn.execute("DELETE FROM limite_eventos WHERE momento < ?", (ahora - 86400,))
+    conn.execute("INSERT INTO limite_eventos (clave, momento) VALUES (?, ?)", (clave, ahora))
+    conn.commit()
+    conn.close()
+
+
+def borrar_eventos(clave):
+    conn = get_conn()
+    conn.execute("DELETE FROM limite_eventos WHERE clave = ?", (clave,))
     conn.commit()
     conn.close()

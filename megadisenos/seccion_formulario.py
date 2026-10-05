@@ -8,6 +8,7 @@ se guarda en la base de datos.
 """
 import copy
 import image_tools
+import editor_visual
 
 CAMPOS_SECCION = {
     'hero': {
@@ -59,7 +60,11 @@ def procesar_formulario(seccion, form, archivos):
 
     for campo in cfg['escalares']:
         if campo in form:
-            datos[campo] = form.get(campo, '').strip()
+            valor = form.get(campo, '').strip()[:editor_visual.LARGO_MAXIMO_TEXTO]
+            if campo.endswith('link'):
+                # Solo enlaces seguros (/, #, http(s), mailto, tel). Nada de javascript:
+                valor = editor_visual._link_seguro(valor, datos.get(campo, ''))
+            datos[campo] = valor
 
     for nombre_lista, conf in cfg['listas'].items():
         lista = datos.get(nombre_lista, [])
@@ -67,7 +72,7 @@ def procesar_formulario(seccion, form, archivos):
             for sub in conf['subcampos']:
                 clave = f"{nombre_lista}__{i}__{sub}"
                 if clave in form:
-                    valor = form.get(clave, '').strip()
+                    valor = form.get(clave, '').strip()[:editor_visual.LARGO_MAXIMO_TEXTO]
                     if sub == 'estrellas':
                         try:
                             valor = max(1, min(5, int(valor)))
@@ -77,12 +82,18 @@ def procesar_formulario(seccion, form, archivos):
             if conf['imagen']:
                 archivo = archivos.get(f"imagen__{nombre_lista}__{i}")
                 if archivo and archivo.filename and image_tools.es_imagen_valida(archivo.filename):
-                    item['imagen'] = image_tools.guardar_imagen_optimizada(archivo, f"{tipo}-{nombre_lista}-{i}")
+                    try:
+                        item['imagen'] = image_tools.guardar_imagen_optimizada(archivo, f"{tipo}-{nombre_lista}-{i}")
+                    except Exception:
+                        pass  # imagen inválida: se conserva la anterior
 
     if cfg['imagen_simple']:
         campo_img = cfg['imagen_simple']
         archivo = archivos.get(f"imagen__{campo_img}")
         if archivo and archivo.filename and image_tools.es_imagen_valida(archivo.filename):
-            datos[campo_img] = image_tools.guardar_imagen_optimizada(archivo, f"{tipo}-{campo_img}")
+            try:
+                datos[campo_img] = image_tools.guardar_imagen_optimizada(archivo, f"{tipo}-{campo_img}")
+            except Exception:
+                pass  # imagen inválida: se conserva la anterior
 
     return datos

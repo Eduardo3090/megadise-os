@@ -10,6 +10,7 @@ siendo rápido sin que el cliente tenga que preocuparse de nada.
 import os
 import time
 import re
+import secrets
 from PIL import Image, ImageOps
 import rutas
 
@@ -19,6 +20,8 @@ CALIDAD_JPG = 82
 CALIDAD_WEBP = 78
 
 EXTENSIONES_PERMITIDAS = {'.jpg', '.jpeg', '.png', '.webp'}
+FORMATOS_PERMITIDOS = {'JPEG', 'PNG', 'WEBP'}   # formato real del archivo, no solo la extensión
+PIXELES_MAXIMOS = 40_000_000                    # evita imágenes gigantes que agotan la memoria
 
 
 def es_imagen_valida(nombre_archivo):
@@ -39,11 +42,16 @@ def guardar_imagen_optimizada(archivo_subido, nombre_referencia="seccion"):
     Devuelve el 'nombre base' que se guarda en la base de datos y que
     luego se resuelve con la función url_imagen(), ej: 'media/hero-1-1699999999'
     """
-    base = f"{_slug(nombre_referencia)}-{int(time.time())}"
+    # El sufijo aleatorio evita que dos subidas en el mismo segundo se pisen
+    base = f"{_slug(nombre_referencia)}-{int(time.time())}-{secrets.token_hex(3)}"
     ruta_jpg = os.path.join(CARPETA_UPLOADS, base + '.jpg')
     ruta_webp = os.path.join(CARPETA_UPLOADS, base + '.webp')
 
     imagen = Image.open(archivo_subido)
+    if imagen.format not in FORMATOS_PERMITIDOS:
+        raise ValueError("Formato de imagen no permitido")
+    if imagen.width * imagen.height > PIXELES_MAXIMOS:
+        raise ValueError("La imagen tiene demasiados píxeles")
     imagen = ImageOps.exif_transpose(imagen)  # corrige orientación de fotos de celular
     if imagen.mode in ("RGBA", "P"):
         fondo = Image.new("RGB", imagen.size, (255, 255, 255))
