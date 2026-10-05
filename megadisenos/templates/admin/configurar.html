@@ -9,16 +9,27 @@
             Es la primera vez que se abre el panel de edición. Crea tu usuario y contraseña
             para poder editar los textos e imágenes del sitio cuando quieras.
         </p>
+        {% if not setup_activo %}
+        <div class="admin-flash admin-flash-error">
+            La creación del acceso está desactivada. Quien administra el servidor debe definir la
+            variable <strong>ADMIN_SETUP_TOKEN</strong> y reiniciar el sitio.
+        </div>
+        {% endif %}
         <form method="POST" action="{{ url_for('admin_configurar') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            {% if setup_activo %}
+            <label for="token">Código de instalación</label>
+            <input type="password" id="token" name="token" required autocomplete="off" placeholder="El código que te entregó tu desarrollador">
+            {% endif %}
+
             <label for="usuario">Elige un usuario</label>
             <input type="text" id="usuario" name="usuario" required autocomplete="username" autofocus placeholder="ej: megadisenos">
 
             <label for="password">Elige una contraseña</label>
-            <input type="password" id="password" name="password" required autocomplete="new-password" minlength="8" placeholder="Mínimo 8 caracteres">
+            <input type="password" id="password" name="password" required autocomplete="new-password" minlength="{{ min_password }}" placeholder="Mínimo {{ min_password }} caracteres">
 
             <label for="password2">Repite la contraseña</label>
-            <input type="password" id="password2" name="password2" required autocomplete="new-password" minlength="8">
+            <input type="password" id="password2" name="password2" required autocomplete="new-password" minlength="{{ min_password }}">
 
             <button type="submit" class="admin-btn admin-btn-primary admin-btn-full">Crear acceso</button>
         </form>

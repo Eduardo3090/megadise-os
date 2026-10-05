@@ -1,0 +1,27 @@
+{% extends "admin/base_admin.html" %}
+{% block titulo %}Mi cuenta{% endblock %}
+{% block contenido %}
+<div class="admin-center-box">
+    <div class="admin-card admin-login-card">
+        <h1>Mi cuenta</h1>
+        <p class="admin-subtext">
+            Usuario: <strong>{{ usuario }}</strong><br>
+            Al cambiar la contraseña, cualquier otra sesión abierta del panel se cierra automáticamente.
+        </p>
+        <form method="POST" action="{{ url_for('admin_cuenta') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            <label for="actual">Contraseña actual</label>
+            <input type="password" id="actual" name="actual" required autocomplete="current-password" autofocus>
+
+            <label for="nueva">Contraseña nueva</label>
+            <input type="password" id="nueva" name="nueva" required autocomplete="new-password" minlength="{{ min_password }}" placeholder="Mínimo {{ min_password }} caracteres">
+
+            <label for="nueva2">Repite la contraseña nueva</label>
+            <input type="password" id="nueva2" name="nueva2" required autocomplete="new-password" minlength="{{ min_password }}">
+
+            <button type="submit" class="admin-btn admin-btn-primary admin-btn-full">Cambiar contraseña</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
