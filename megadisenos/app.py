@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, abort, send_from_directory, g
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, abort, send_from_directory, g, Response
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -110,6 +110,7 @@ def _cabeceras_seguridad(resp):
     if request.path.startswith("/admin"):
         # El panel nunca debe quedar guardado en cachés ni en el botón "atrás"
         resp.headers["Cache-Control"] = "no-store"
+        resp.headers["X-Robots-Tag"] = "noindex, nofollow"
     return resp
 
 
@@ -415,6 +416,58 @@ def eliminar_datos():
 @app.route('/funciones-futuras')
 def funciones_futuras():
     return _render_pagina('funciones')
+
+# ── SEO: dominio, robots.txt y sitemap.xml ─────────────
+SITE_URL = os.getenv("SITE_URL", "https://megadisenos.cl").strip().rstrip("/")
+
+# Páginas públicas que Google debe indexar: (ruta, prioridad, frecuencia)
+PAGINAS_SITEMAP = [
+    ("/", "1.0", "weekly"),
+    ("/servicios", "0.9", "monthly"),
+    ("/portafolio", "0.8", "monthly"),
+    ("/nosotros", "0.7", "monthly"),
+    ("/contactanos", "0.8", "yearly"),
+]
+
+
+@app.context_processor
+def _contexto_seo():
+    return {
+        "seo_url": SITE_URL + request.path,
+        "seo_sitio": SITE_URL,
+        "seo_imagen": SITE_URL + url_for('static', filename='og-imagen.jpg'),
+    }
+
+
+@app.route('/robots.txt')
+def robots_txt():
+    texto = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Disallow: /admin\n"
+        "Disallow: /suscribir\n"
+        "Disallow: /eliminar-datos\n"
+        "\n"
+        f"Sitemap: {SITE_URL}/sitemap.xml\n"
+    )
+    resp = Response(texto, mimetype='text/plain')
+    resp.headers['Cache-Control'] = 'public, max-age=3600'
+    return resp
+
+
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    filas = "".join(
+        f"  <url>\n    <loc>{SITE_URL}{ruta if ruta != '/' else '/'}</loc>\n"
+        f"    <changefreq>{frec}</changefreq>\n    <priority>{prio}</priority>\n  </url>\n"
+        for ruta, prio, frec in PAGINAS_SITEMAP
+    )
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + filas + '</urlset>\n')
+    resp = Response(xml, mimetype='application/xml')
+    resp.headers['Cache-Control'] = 'public, max-age=3600'
+    return resp
+
 
 # ── PANEL DE EDICIÓN (/admin) ──────────────────────────
 import seccion_formulario
