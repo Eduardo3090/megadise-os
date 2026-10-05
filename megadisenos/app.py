@@ -145,6 +145,12 @@ def servir_media(filename):
     return send_from_directory(rutas.CARPETA_MEDIA, filename)
 
 
+@app.route('/favicon.ico')
+def favicon():
+    """Muchos navegadores y buscadores piden /favicon.ico directamente."""
+    return send_from_directory(app.static_folder, 'favicon.ico', max_age=86400)
+
+
 # ── BASE DE DATOS ──────────────────────────────────────
 def init_db():
     conn = sqlite3.connect(rutas.RUTA_SUSCRIPTORES_DB)
