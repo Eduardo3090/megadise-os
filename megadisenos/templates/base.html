@@ -5,6 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}Megadiseños | Imprenta en Copiapó{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Imprenta en Copiapó especializada en impresión digital, plotter de corte, gigantografías y diseño gráfico para empresas de la Región de Atacama. Cotiza online.{% endblock %}">
+    {% if not (modo_edicion or modo_previa) %}{% block robots %}<meta name="robots" content="index, follow, max-image-preview:large">{% endblock %}{% endif %}
+    <link rel="canonical" href="{{ seo_url }}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:site_name" content="Megadiseños">
+    <meta property="og:title" content="{{ self.titulo()|striptags }}">
+    <meta property="og:description" content="{{ self.meta_description()|striptags }}">
+    <meta property="og:url" content="{{ seo_url }}">
+    <meta property="og:image" content="{{ seo_imagen }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Megadiseños — Imprenta y diseño gráfico en Copiapó">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ self.titulo()|striptags }}">
+    <meta name="twitter:description" content="{{ self.meta_description()|striptags }}">
+    <meta name="twitter:image" content="{{ seo_imagen }}">
+    {% if request.path == '/' and not (modo_edicion or modo_previa) %}
+    {% set _ld = {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "@id": seo_sitio ~ "/#negocio",
+        "name": "Megadiseños",
+        "legalName": "Sociedad Megadiseños SpA",
+        "description": "Imprenta y diseño gráfico en Copiapó: impresión digital, plotter de corte, gigantografías, stickers, papelería corporativa y diseño gráfico para empresas de la Región de Atacama.",
+        "url": seo_sitio ~ "/",
+        "logo": seo_sitio ~ url_for('static', filename='apple-touch-icon.png'),
+        "image": seo_imagen,
+        "telephone": pie.datos.telefono,
+        "email": pie.datos.correo,
+        "address": {"@type": "PostalAddress", "addressLocality": "Copiapó", "addressRegion": "Atacama", "addressCountry": "CL"},
+        "areaServed": {"@type": "AdministrativeArea", "name": "Región de Atacama, Chile"},
+        "sameAs": [pie.datos.instagram_link, pie.datos.facebook_link]
+    } %}
+    <script type="application/ld+json">{{ _ld|tojson }}</script>
+    {% endif %}
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico', v=3) }}" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png', v=3) }}">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png', v=3) }}">
