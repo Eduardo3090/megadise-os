@@ -1,18 +1,11 @@
 {% extends "admin/base_admin.html" %}
 {% block titulo %}Panel{% endblock %}
 {% block contenido %}
-<div class="admin-header-row">
-    <div>
-        <h1>Tu sitio</h1>
-        <p class="admin-subtext">
-            {% if hay_borrador %}
-                Tienes <strong>cambios sin publicar</strong>. Revísalos en la vista previa y publícalos desde el editor.
-            {% else %}
-                Todo está publicado. Lo que ves en el sitio es la versión actual.
-            {% endif %}
-        </p>
-    </div>
+{% if hay_borrador %}
+<div class="admin-flash" style="margin-bottom:1.5rem;">
+    Tienes <strong>cambios sin publicar</strong>. Revísalos en la vista previa y publícalos desde el editor.
 </div>
+{% endif %}
 
 {% if not disco_persistente %}
 <div class="admin-flash admin-flash-error" style="margin-bottom:1.5rem;">

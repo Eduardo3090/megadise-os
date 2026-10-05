@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}Panel de edición{% endblock %} · Megadiseños</title>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico', v=2) }}" sizes="any">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png', v=2) }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png', v=2) }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico', v=3) }}" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png', v=3) }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png', v=3) }}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -16,7 +16,11 @@
 <body class="{% block bodyclass %}{% endblock %}">
 {% if session.get('admin_id') %}
 <header class="admin-topbar">
-    <a href="{{ url_for('admin_dashboard') }}" class="admin-logo">Megadiseños <span>Editor</span></a>
+    <a href="{{ url_for('admin_dashboard') }}" class="admin-logo" title="Sertains Labs · Editor de Megadiseños">
+        <img src="{{ url_for('static', filename='sertains-labs-logo.webp') }}" alt="Sertains Labs" width="168" height="30">
+        <i class="admin-logo-sep" aria-hidden="true"></i>
+        <b>Editor</b><em> · Megadiseños</em>
+    </a>
     <nav class="admin-topnav">
         <a href="{{ url_for('admin_editor') }}"><i class="fa-solid fa-pen-ruler"></i> Editor visual</a>
         <a href="/" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver sitio</a>
