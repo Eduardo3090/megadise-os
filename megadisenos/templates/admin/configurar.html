@@ -1,10 +1,12 @@
 {% extends "admin/base_admin.html" %}
 {% block titulo %}Crear acceso{% endblock %}
+{% block bodyclass %}admin-acceso{% endblock %}
 {% block contenido %}
 <div class="admin-center-box">
     <div class="admin-card admin-login-card">
         <img src="{{ url_for('static', filename='logo megadisenos.png') }}" alt="Megadiseños" class="admin-login-logo">
-        <h1>Bienvenido 👋</h1>
+        <p class="admin-eyebrow">Primera configuración</p>
+        <h1>Bienvenido</h1>
         <p class="admin-subtext">
             Es la primera vez que se abre el panel de edición. Crea tu usuario y contraseña
             para poder editar los textos e imágenes del sitio cuando quieras.
@@ -15,7 +17,7 @@
             variable <strong>ADMIN_SETUP_TOKEN</strong> y reiniciar el sitio.
         </div>
         {% endif %}
-        <form method="POST" action="{{ url_for('admin_configurar') }}">
+        <form method="POST" action="{{ url_for('admin_configurar') }}" class="admin-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             {% if setup_activo %}
             <label for="token">Código de instalación</label>

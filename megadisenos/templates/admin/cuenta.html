@@ -8,7 +8,7 @@
             Usuario: <strong>{{ usuario }}</strong><br>
             Al cambiar la contraseña, cualquier otra sesión abierta del panel se cierra automáticamente.
         </p>
-        <form method="POST" action="{{ url_for('admin_cuenta') }}">
+        <form method="POST" action="{{ url_for('admin_cuenta') }}" class="admin-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
             <label for="actual">Contraseña actual</label>

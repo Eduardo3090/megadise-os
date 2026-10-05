@@ -1,12 +1,14 @@
 {% extends "admin/base_admin.html" %}
 {% block titulo %}Iniciar sesión{% endblock %}
+{% block bodyclass %}admin-acceso{% endblock %}
 {% block contenido %}
 <div class="admin-center-box">
     <div class="admin-card admin-login-card">
         <img src="{{ url_for('static', filename='logo megadisenos.png') }}" alt="Megadiseños" class="admin-login-logo">
+        <p class="admin-eyebrow">Acceso privado</p>
         <h1>Panel de edición</h1>
         <p class="admin-subtext">Inicia sesión para editar los textos e imágenes de tu sitio web.</p>
-        <form method="POST" action="{{ url_for('admin_login') }}">
+        <form method="POST" action="{{ url_for('admin_login') }}" class="admin-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="siguiente" value="{{ siguiente or '' }}">
             <label for="usuario">Usuario</label>

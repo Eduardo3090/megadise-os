@@ -4,14 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}Panel de edición{% endblock %} · Megadiseños</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
 </head>
-<body>
+<body class="{% block bodyclass %}{% endblock %}">
 {% if session.get('admin_id') %}
 <header class="admin-topbar">
-    <a href="{{ url_for('admin_dashboard') }}" class="admin-logo">Megadiseños <span>· Editor</span></a>
+    <a href="{{ url_for('admin_dashboard') }}" class="admin-logo">Megadiseños <span>Editor</span></a>
     <nav class="admin-topnav">
         <a href="{{ url_for('admin_editor') }}"><i class="fa-solid fa-pen-ruler"></i> Editor visual</a>
         <a href="/" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver sitio</a>
@@ -34,6 +39,11 @@
 
     {% block contenido %}{% endblock %}
 </main>
+
+<footer class="admin-footer">
+    <span>Editor visual por</span>
+    <img src="{{ url_for('static', filename='sertains-labs-logo.webp') }}" alt="Sertains Labs" width="124" height="22">
+</footer>
 
 </body>
 </html>
