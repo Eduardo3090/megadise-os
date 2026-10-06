@@ -86,7 +86,7 @@ CSP = (
     "frame-src 'self'; "
     "object-src 'none'; "
     "base-uri 'self'; "
-    "form-action 'self'; "
+    "form-action 'self' https://formsubmit.co; "
     "frame-ancestors 'self'"
 )
 
@@ -300,6 +300,10 @@ def contactanos():
         return jsonify({"exito": True})
 
     return _render_pagina('contactanos')
+
+@app.route('/gracias')
+def gracias():
+    return render_template('gracias.html')
 
 @app.route('/privacidad')
 def privacidad():
