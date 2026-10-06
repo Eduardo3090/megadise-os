@@ -28,8 +28,15 @@
     </div>
         <!-- FORMULARIO -->
     <div class="form-card reveal">
-      <form id="formContacto" onsubmit="return false;">
-        <input type="text" name="empresa_web" id="empresa_web" style="position:absolute; left:-9999px;" tabindex="-1" autocomplete="off">
+      <form id="formContacto" action="https://formsubmit.co/ventasmegadisenos@gmail.com" method="POST"{% if modo_edicion or modo_previa %} onsubmit="return false;"{% endif %}>
+        <!-- Configuración de FormSubmit (el mismo sistema del sitio de Sertains Labs) -->
+        <input type="hidden" name="_subject" value="Nuevo contacto desde Megadiseños">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="{{ seo_sitio }}/gracias">
+        <input type="hidden" name="_autoresponse" value="Hola, gracias por escribirle a Megadiseños. Recibimos tu mensaje y nos contactaremos contigo en menos de 24 horas. Si tu consulta es urgente, escríbenos por WhatsApp al +56 9 4862 3875.">
+        <!-- Protección anti-spam (honeypot) -->
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
         <div class="form-row">
           <div class="form-group">
             <label>Nombre</label>
@@ -48,8 +55,8 @@
           <label>Mensaje</label>
           <textarea name="mensaje" id="mensaje" placeholder="¿En qué podemos ayudarte?" required></textarea>
         </div>
-        <button type="button" onclick="enviarContacto()" class="btn-submit">{{ ed(s, 'boton_texto', d.boton_texto) }}</button>
-        <p id="mensajeContacto" style="margin-top:1rem; font-size:.9rem; display:none;"></p>
+        <button type="submit" class="btn-submit">{{ ed(s, 'boton_texto', d.boton_texto) }}</button>
+        <p style="margin-top:1rem; font-size:.8rem; opacity:.7;">Al enviar aceptas nuestra <a href="/privacidad">política de privacidad</a>.</p>
       </form>
     </div>
   </div>
