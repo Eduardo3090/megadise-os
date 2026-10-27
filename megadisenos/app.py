@@ -633,14 +633,6 @@ def _correo_recuperacion():
     return os.getenv("CORREO_RECUPERACION", "").strip() or correo.correo_empresa()
 
 
-def _ocultar_correo(email):
-    """ventasmegadisenos@gmail.com → ve••••••@gmail.com"""
-    usuario, _, dominio = email.partition("@")
-    if not dominio:
-        return "el correo de recuperación"
-    return usuario[:2] + "•" * max(3, min(8, len(usuario) - 2)) + "@" + dominio
-
-
 def _firmador_recuperacion():
     return URLSafeTimedSerializer(app.secret_key, salt="recuperar-contrasena-admin")
 
@@ -693,8 +685,7 @@ def admin_recuperar():
     if admin_actual():
         return redirect(url_for('admin_cuenta'))
 
-    destino = _correo_recuperacion()
-    contexto = dict(correo_oculto=_ocultar_correo(destino), envio_activo=correo.hay_proveedor())
+    contexto = dict(envio_activo=correo.hay_proveedor())
 
     if request.method == 'POST':
         validar_csrf(request.form)
@@ -710,15 +701,20 @@ def admin_recuperar():
         content_store.registrar_evento(f"recuperar:{_ip()}")
         content_store.registrar_evento("recuperar:total")
 
-        admin = content_store.obtener_admin_principal()
-        enlace = SITE_URL + url_for('admin_restablecer', token=_crear_token_recuperacion(admin))
-        ok, detalle = correo.enviar(destino, "Recupera el acceso al panel de Megadiseños",
-                                    _correo_recuperacion_html(admin["usuario"], enlace))
-        if not ok:
-            app.logger.error("No se pudo enviar el correo de recuperación: %s", detalle)
-            flash('No se pudo enviar el correo en este momento. Inténtalo más tarde o contacta a Sertains Labs.', 'error')
-            return render_template('admin/recuperar.html', **contexto), 502
+        usuario = request.form.get('usuario', '').strip()[:60]
+        admin = content_store.obtener_admin_por_usuario(usuario) if usuario else None
+        if admin:
+            # Siempre al correo guardado para ese usuario (o al de la empresa), nunca a uno escrito aquí
+            destino = (admin.get("correo") or "").strip() or _correo_recuperacion()
+            enlace = SITE_URL + url_for('admin_restablecer', token=_crear_token_recuperacion(admin))
+            ok, detalle = correo.enviar(destino, "Recupera el acceso al panel de Megadiseños",
+                                        _correo_recuperacion_html(admin["usuario"], enlace))
+            if not ok:
+                app.logger.error("No se pudo enviar el correo de recuperación: %s", detalle)
+                flash('No se pudo enviar el correo en este momento. Inténtalo más tarde o contacta a Sertains Labs.', 'error')
+                return render_template('admin/recuperar.html', **contexto), 502
 
+        # La respuesta es la misma exista o no el usuario, para no revelar cuáles existen
         return render_template('admin/recuperar.html', enviado=True, **contexto)
 
     return render_template('admin/recuperar.html', **contexto)
@@ -752,14 +748,86 @@ def admin_restablecer(token):
             # Cambia la huella: este enlace y todas las sesiones abiertas dejan de valer
             content_store.borrar_eventos(f"loginu:{admin['usuario'].lower()[:60]}")
             iniciar_sesion(content_store.obtener_admin_por_id(admin['id']))
-            correo.enviar(_correo_recuperacion(), "Se cambió la contraseña del panel de Megadiseños",
-                          "<p>La contraseña del panel de edición de megadisenos.cl se cambió recién "
+            correo.enviar((admin.get("correo") or "").strip() or _correo_recuperacion(),
+                          "Se cambió la contraseña del panel de Megadiseños",
+                          f"<p>La contraseña del usuario <strong>{html.escape(admin['usuario'])}</strong> "
+                          "del panel de edición de megadisenos.cl se cambió recién "
                           "usando el enlace de recuperación.</p><p>Si no fuiste tú, contacta de inmediato "
                           "a Sertains Labs.</p>")
             flash('¡Listo! Tu contraseña se cambió y ya iniciaste sesión.', 'exito')
             return redirect(url_for('admin_editor'))
 
     return render_template('admin/restablecer.html', token=token, min_password=MIN_PASSWORD)
+
+
+# ── Usuarios del panel ────────────────────────────────────
+USUARIO_VALIDO = re.compile(r"[A-Za-z0-9._-]{3,40}")
+
+
+def _correo_limpio(texto):
+    texto = (texto or "").strip()[:120]
+    if not texto:
+        return ""
+    return texto if EMAIL_REGEX.fullmatch(texto) else None
+
+
+@app.route('/admin/usuarios', methods=['GET', 'POST'])
+@login_required
+def admin_usuarios():
+    yo = admin_actual()
+    if request.method == 'POST':
+        validar_csrf(request.form)
+        accion = request.form.get('accion', '')
+
+        if accion == 'crear':
+            if _limitar(f"usuarios:{yo['id']}", 10, 3600):
+                flash(MSG_DEMASIADOS, 'error')
+                return redirect(url_for('admin_usuarios'))
+            usuario = request.form.get('usuario', '').strip()
+            email = _correo_limpio(request.form.get('correo'))
+            password = request.form.get('password', '')
+            password2 = request.form.get('password2', '')
+            if not USUARIO_VALIDO.fullmatch(usuario):
+                flash('El usuario debe tener entre 3 y 40 caracteres, sin espacios (letras, números, punto, guion o guion bajo).', 'error')
+            elif content_store.obtener_admin_por_usuario(usuario):
+                flash(f'Ya existe un usuario llamado «{usuario}».', 'error')
+            elif email is None:
+                flash('El correo de recuperación no es válido.', 'error')
+            elif len(password) < MIN_PASSWORD:
+                flash(f'La contraseña debe tener al menos {MIN_PASSWORD} caracteres.', 'error')
+            elif password.lower() == usuario.lower():
+                flash('La contraseña no puede ser igual al usuario.', 'error')
+            elif password != password2:
+                flash('Las contraseñas no coinciden.', 'error')
+            elif content_store.crear_usuario(usuario, generate_password_hash(password), email):
+                flash(f'Usuario «{usuario}» creado. Ya puede entrar en {SITE_URL}/admin', 'exito')
+            else:
+                flash(f'Ya existe un usuario llamado «{usuario}».', 'error')
+
+        elif accion == 'correo':
+            admin_id = request.form.get('id', type=int)
+            email = _correo_limpio(request.form.get('correo'))
+            if not content_store.obtener_admin_por_id(admin_id):
+                abort(404)
+            if email is None:
+                flash('El correo de recuperación no es válido.', 'error')
+            else:
+                content_store.actualizar_correo_admin(admin_id, email)
+                flash('Correo de recuperación actualizado.', 'exito')
+
+        elif accion == 'eliminar':
+            admin_id = request.form.get('id', type=int)
+            if admin_id == yo['id']:
+                flash('No puedes eliminar tu propio usuario mientras lo estás usando.', 'error')
+            elif content_store.eliminar_admin(admin_id):
+                flash('Usuario eliminado. Su acceso quedó cerrado de inmediato.', 'exito')
+            else:
+                flash('No se pudo eliminar ese usuario.', 'error')
+
+        return redirect(url_for('admin_usuarios'))
+
+    return render_template('admin/usuarios.html', usuarios=content_store.listar_admins(), yo=yo,
+                           correo_empresa=_correo_recuperacion(), min_password=MIN_PASSWORD)
 
 
 # ── Editor visual ─────────────────────────────────────────

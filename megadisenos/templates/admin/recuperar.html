@@ -10,22 +10,24 @@
         {% if enviado %}
         <h1>Revisa tu correo</h1>
         <p class="admin-subtext">
-            Enviamos un enlace a <strong>{{ correo_oculto }}</strong> para crear una contraseña nueva.
-            El correo también te recuerda tu usuario.
+            Si el usuario existe, enviamos un enlace a su <strong>correo de recuperación</strong> para crear una contraseña nueva.
         </p>
-        <p class="admin-subtext">El enlace dura <strong>30 minutos</strong> y sirve una sola vez. Si no llega, revisa la carpeta de spam.</p>
+        <p class="admin-subtext">El enlace dura <strong>30 minutos</strong> y sirve una sola vez. Si no llega en unos minutos, revisa la carpeta de spam o confirma que escribiste bien tu usuario.</p>
         {% else %}
         <h1>¿Olvidaste tu contraseña?</h1>
         <p class="admin-subtext">
-            Te enviaremos un enlace a <strong>{{ correo_oculto }}</strong> para crear una contraseña nueva.
-            También te recordaremos tu usuario.
+            Escribe tu usuario y te enviaremos un enlace a tu correo de recuperación para crear una contraseña nueva.
         </p>
         <form method="POST" action="{{ url_for('admin_recuperar') }}" class="admin-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label for="usuario">Usuario</label>
+            <input type="text" id="usuario" name="usuario" required autocomplete="username" maxlength="60" autofocus{% if not envio_activo %} disabled{% endif %}>
             <button type="submit" class="admin-btn admin-btn-primary admin-btn-full"{% if not envio_activo %} disabled{% endif %}>Enviarme el enlace</button>
         </form>
         {% if not envio_activo %}
         <p class="admin-subtext admin-nota">El envío de correos no está configurado. Contacta a Sertains Labs para recuperar el acceso.</p>
+        {% else %}
+        <p class="admin-subtext admin-nota">¿No recuerdas tu usuario? Contacta a Sertains Labs.</p>
         {% endif %}
         {% endif %}
 

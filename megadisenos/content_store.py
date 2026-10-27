@@ -403,6 +403,12 @@ def init_db():
     c.execute("CREATE INDEX IF NOT EXISTS idx_limite_clave ON limite_eventos (clave, momento)")
     conn.commit()
 
+    # Migración: correo de recuperación propio de cada usuario del panel.
+    cols_admin = {fila[1] for fila in c.execute("PRAGMA table_info(admin_usuario)").fetchall()}
+    if "correo" not in cols_admin:
+        c.execute("ALTER TABLE admin_usuario ADD COLUMN correo TEXT")
+    conn.commit()
+
     # Migración: agrega las columnas del borrador si la base es antigua.
     columnas = {fila[1] for fila in c.execute("PRAGMA table_info(secciones)").fetchall()}
     for col, tipo in (("borrador_datos", "TEXT"), ("borrador_visible", "INTEGER"), ("borrador_orden", "INTEGER")):
@@ -567,17 +573,50 @@ def obtener_admin_por_id(admin_id):
     return dict(fila) if fila else None
 
 
-def obtener_admin_principal():
-    """El administrador del sitio (el panel admite uno solo)."""
+def listar_admins():
     conn = get_conn()
-    fila = conn.execute("SELECT * FROM admin_usuario ORDER BY id LIMIT 1").fetchone()
+    filas = conn.execute("SELECT id, usuario, correo FROM admin_usuario ORDER BY id").fetchall()
     conn.close()
-    return dict(fila) if fila else None
+    return [dict(f) for f in filas]
+
+
+def crear_usuario(usuario, password_hash, correo=None):
+    """Agrega un usuario más al panel. Devuelve False si ese nombre ya existe."""
+    conn = get_conn()
+    try:
+        conn.execute("INSERT INTO admin_usuario (usuario, password_hash, correo) VALUES (?, ?, ?)",
+                     (usuario, password_hash, correo or None))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+
+
+def actualizar_correo_admin(admin_id, correo):
+    conn = get_conn()
+    conn.execute("UPDATE admin_usuario SET correo = ? WHERE id = ?", (correo or None, admin_id))
+    conn.commit()
+    conn.close()
+
+
+def eliminar_admin(admin_id):
+    """Elimina un usuario, salvo que sea el último (el panel nunca queda sin acceso)."""
+    conn = get_conn()
+    cur = conn.execute(
+        "DELETE FROM admin_usuario WHERE id = ? AND (SELECT COUNT(*) FROM admin_usuario) > 1",
+        (admin_id,)
+    )
+    conn.commit()
+    borrado = cur.rowcount == 1
+    conn.close()
+    return borrado
 
 
 def obtener_admin_por_usuario(usuario):
     conn = get_conn()
-    fila = conn.execute("SELECT * FROM admin_usuario WHERE usuario = ?", (usuario,)).fetchone()
+    fila = conn.execute("SELECT * FROM admin_usuario WHERE usuario = ? COLLATE NOCASE", (usuario,)).fetchone()
     conn.close()
     return dict(fila) if fila else None
 

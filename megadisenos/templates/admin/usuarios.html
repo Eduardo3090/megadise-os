@@ -1,0 +1,72 @@
+{% extends "admin/base_admin.html" %}
+{% block titulo %}Usuarios{% endblock %}
+{% block contenido %}
+<div class="admin-header-row">
+    <div>
+        <h1>Usuarios del panel</h1>
+        <p class="admin-subtext">Cada persona que edita el sitio debe tener su propio usuario. Así nadie comparte contraseñas y puedes quitarle el acceso a alguien sin afectar a los demás.</p>
+    </div>
+</div>
+
+<div class="admin-card" style="margin-bottom:1.5rem;">
+    <ul class="admin-usuarios">
+        {% for u in usuarios %}
+        <li class="admin-usuario">
+            <div class="admin-usuario-info">
+                <span class="admin-seccion-nombre"><i class="fa-solid fa-user"></i> {{ u.usuario }}{% if u.id == yo.id %} <span class="admin-etiqueta">Tú</span>{% endif %}</span>
+                <form method="POST" class="admin-usuario-correo">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <input type="hidden" name="accion" value="correo">
+                    <input type="hidden" name="id" value="{{ u.id }}">
+                    <label for="correo-{{ u.id }}">Correo de recuperación</label>
+                    <div class="admin-fila-campo">
+                        <input type="email" id="correo-{{ u.id }}" name="correo" value="{{ u.correo or '' }}" placeholder="Si lo dejas vacío: {{ correo_empresa }}" maxlength="120">
+                        <button type="submit" class="admin-btn admin-btn-secondary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+            {% if u.id != yo.id and usuarios|length > 1 %}
+            <form method="POST" class="admin-usuario-eliminar" onsubmit="return confirm('¿Eliminar el usuario «{{ u.usuario }}»? Ya no podrá entrar al panel.');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="accion" value="eliminar">
+                <input type="hidden" name="id" value="{{ u.id }}">
+                <button type="submit" class="admin-btn admin-btn-ghost"><i class="fa-solid fa-trash"></i> Eliminar</button>
+            </form>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="admin-card">
+    <h3 class="admin-subheading" style="margin-top:0;">Agregar un usuario</h3>
+    <form method="POST" class="admin-form" autocomplete="off">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="accion" value="crear">
+        <div class="admin-grid-2">
+            <div>
+                <label for="nuevo-usuario">Usuario</label>
+                <input type="text" id="nuevo-usuario" name="usuario" required maxlength="40" placeholder="Ej: laura" autocomplete="off">
+            </div>
+            <div>
+                <label for="nuevo-correo">Correo de recuperación <span class="admin-opcional">(opcional)</span></label>
+                <input type="email" id="nuevo-correo" name="correo" maxlength="120" placeholder="{{ correo_empresa }}">
+            </div>
+        </div>
+        <div class="admin-grid-2">
+            <div>
+                <label for="nuevo-pass">Contraseña</label>
+                <input type="password" id="nuevo-pass" name="password" required minlength="{{ min_password }}" placeholder="Mínimo {{ min_password }} caracteres" autocomplete="new-password">
+            </div>
+            <div>
+                <label for="nuevo-pass2">Repite la contraseña</label>
+                <input type="password" id="nuevo-pass2" name="password2" required minlength="{{ min_password }}" autocomplete="new-password">
+            </div>
+        </div>
+        <p class="admin-subtext" style="margin-top:.8rem;">Si olvida su contraseña, el enlace para crear una nueva le llegará a este correo. Si lo dejas vacío, llegará a {{ correo_empresa }}.</p>
+        <div class="admin-form-acciones">
+            <button type="submit" class="admin-btn admin-btn-primary"><i class="fa-solid fa-user-plus"></i> Crear usuario</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
