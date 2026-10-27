@@ -567,6 +567,14 @@ def obtener_admin_por_id(admin_id):
     return dict(fila) if fila else None
 
 
+def obtener_admin_principal():
+    """El administrador del sitio (el panel admite uno solo)."""
+    conn = get_conn()
+    fila = conn.execute("SELECT * FROM admin_usuario ORDER BY id LIMIT 1").fetchone()
+    conn.close()
+    return dict(fila) if fila else None
+
+
 def obtener_admin_por_usuario(usuario):
     conn = get_conn()
     fila = conn.execute("SELECT * FROM admin_usuario WHERE usuario = ?", (usuario,)).fetchone()

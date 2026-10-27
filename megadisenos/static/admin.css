@@ -268,3 +268,15 @@ body.admin-acceso .admin-flashes { width: 100%; max-width: 430px; margin: 0 auto
 @media (max-width: 480px) { .admin-login-card { padding: 2rem 1.4rem 1.8rem; } }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ── Recuperar contraseña ─────────────────────────────── */
+.admin-link-secundario {
+  display: inline-flex; align-items: center; gap: .4rem; margin-top: 1.2rem;
+  font-size: .88rem; color: var(--sl-muted); text-decoration: none;
+  transition: color .15s;
+}
+.admin-link-secundario:hover, .admin-link-secundario:focus-visible { color: var(--sl-ink); text-decoration: underline; }
+.admin-login-card .admin-subtext + .admin-subtext { margin-top: -.6rem; }
+.admin-nota { margin-top: 1rem !important; font-size: .85rem; }
+.admin-btn:disabled { opacity: .5; cursor: not-allowed; }
+

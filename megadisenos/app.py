@@ -8,13 +8,14 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 import rutas
 import content_store
 import image_tools
 import editor_visual
 import correo
-from admin_auth import login_required, generar_csrf_token, validar_csrf, admin_actual, iniciar_sesion
+from admin_auth import login_required, generar_csrf_token, validar_csrf, admin_actual, iniciar_sesion, huella
 
 load_dotenv()  # Carga variables desde un archivo .env en desarrollo local
 
@@ -105,6 +106,8 @@ def _cabeceras_seguridad(resp):
         resp.headers.setdefault("Content-Security-Policy", CSP)
     if request.is_secure:
         resp.headers.setdefault("Strict-Transport-Security", "max-age=31536000")
+    if request.path.startswith("/admin/restablecer/"):
+        resp.headers["Referrer-Policy"] = "no-referrer"
     if request.path.startswith("/admin"):
         # El panel nunca debe quedar guardado en cachés ni en el botón "atrás"
         resp.headers["Cache-Control"] = "no-store"
@@ -616,6 +619,147 @@ def admin_cuenta():
             return redirect(url_for('admin_cuenta'))
 
     return render_template('admin/cuenta.html', usuario=admin['usuario'], min_password=MIN_PASSWORD)
+
+
+# ── Recuperar contraseña olvidada ─────────────────────────
+# El enlace se envía SIEMPRE al correo de recuperación configurado en el
+# servidor (nunca a uno escrito en el formulario), así nadie puede desviarlo.
+# El enlace dura 30 minutos y sirve una sola vez: lleva la "huella" de la
+# contraseña vigente, que cambia en cuanto se usa.
+RECUPERAR_VALIDEZ_SEG = 30 * 60
+
+
+def _correo_recuperacion():
+    return os.getenv("CORREO_RECUPERACION", "").strip() or correo.correo_empresa()
+
+
+def _ocultar_correo(email):
+    """ventasmegadisenos@gmail.com → ve••••••@gmail.com"""
+    usuario, _, dominio = email.partition("@")
+    if not dominio:
+        return "el correo de recuperación"
+    return usuario[:2] + "•" * max(3, min(8, len(usuario) - 2)) + "@" + dominio
+
+
+def _firmador_recuperacion():
+    return URLSafeTimedSerializer(app.secret_key, salt="recuperar-contrasena-admin")
+
+
+def _crear_token_recuperacion(admin):
+    return _firmador_recuperacion().dumps({"id": admin["id"], "h": huella(admin["password_hash"])})
+
+
+def _admin_desde_token(token):
+    """Devuelve el administrador si el enlace es válido, o None si venció o ya se usó."""
+    try:
+        datos = _firmador_recuperacion().loads(token, max_age=RECUPERAR_VALIDEZ_SEG)
+    except (SignatureExpired, BadSignature):
+        return None
+    if not isinstance(datos, dict):
+        return None
+    admin = content_store.obtener_admin_por_id(datos.get("id"))
+    if not admin or not secrets.compare_digest(str(datos.get("h", "")), huella(admin["password_hash"])):
+        return None
+    return admin
+
+
+def _correo_recuperacion_html(usuario, enlace):
+    u = html.escape(usuario)
+    e = html.escape(enlace)
+    return f"""
+    <html><body style="font-family: Arial, sans-serif; color:#222; max-width:560px; margin:auto;">
+      <div style="background:#1a1a1a; padding:20px; text-align:center;">
+        <h1 style="color:#FFC107; margin:0; font-size:22px;">Megadiseños</h1>
+        <p style="color:#fff; font-size:13px; margin:6px 0 0;">Panel de edición del sitio web</p>
+      </div>
+      <div style="padding:28px;">
+        <p>Hola,</p>
+        <p>Alguien pidió restablecer la contraseña del panel de edición de <strong>megadisenos.cl</strong>.</p>
+        <p>Tu usuario es: <strong>{u}</strong></p>
+        <div style="text-align:center; margin:28px 0;">
+          <a href="{e}" style="background:#FFC107; color:#000; padding:12px 28px; text-decoration:none; border-radius:5px; font-weight:bold;">Crear contraseña nueva</a>
+        </div>
+        <p style="font-size:13px; color:#555;">El enlace sirve <strong>una sola vez</strong> y vence en <strong>30 minutos</strong>.</p>
+        <p style="font-size:13px; color:#555;">Si no fuiste tú, ignora este correo: tu contraseña actual sigue funcionando.</p>
+        <p style="font-size:11px; color:#999; word-break:break-all;">Si el botón no funciona, copia este enlace en tu navegador:<br>{e}</p>
+      </div>
+    </body></html>"""
+
+
+@app.route('/admin/recuperar', methods=['GET', 'POST'])
+def admin_recuperar():
+    if not content_store.existe_admin():
+        return redirect(url_for('admin_configurar'))
+    if admin_actual():
+        return redirect(url_for('admin_cuenta'))
+
+    destino = _correo_recuperacion()
+    contexto = dict(correo_oculto=_ocultar_correo(destino), envio_activo=correo.hay_proveedor())
+
+    if request.method == 'POST':
+        validar_csrf(request.form)
+        if not contexto["envio_activo"]:
+            flash('El envío de correos no está configurado en el servidor. Contacta a Sertains Labs para recuperar el acceso.', 'error')
+            return render_template('admin/recuperar.html', **contexto), 503
+
+        # Máximo 3 pedidos cada 15 min por IP y 6 por hora en total (evita llenar la bandeja)
+        if (content_store.contar_eventos(f"recuperar:{_ip()}", 900) >= 3
+                or content_store.contar_eventos("recuperar:total", 3600) >= 6):
+            flash(MSG_DEMASIADOS, 'error')
+            return render_template('admin/recuperar.html', **contexto), 429
+        content_store.registrar_evento(f"recuperar:{_ip()}")
+        content_store.registrar_evento("recuperar:total")
+
+        admin = content_store.obtener_admin_principal()
+        enlace = SITE_URL + url_for('admin_restablecer', token=_crear_token_recuperacion(admin))
+        ok, detalle = correo.enviar(destino, "Recupera el acceso al panel de Megadiseños",
+                                    _correo_recuperacion_html(admin["usuario"], enlace))
+        if not ok:
+            app.logger.error("No se pudo enviar el correo de recuperación: %s", detalle)
+            flash('No se pudo enviar el correo en este momento. Inténtalo más tarde o contacta a Sertains Labs.', 'error')
+            return render_template('admin/recuperar.html', **contexto), 502
+
+        return render_template('admin/recuperar.html', enviado=True, **contexto)
+
+    return render_template('admin/recuperar.html', **contexto)
+
+
+@app.route('/admin/restablecer/<token>', methods=['GET', 'POST'])
+def admin_restablecer(token):
+    admin = _admin_desde_token(token)
+    if not admin:
+        flash('El enlace no es válido, ya se usó o venció (dura 30 minutos). Pide uno nuevo.', 'error')
+        return redirect(url_for('admin_recuperar'))
+
+    if request.method == 'POST':
+        validar_csrf(request.form)
+        if _limitar(f"restablecer:{_ip()}", 10, 900):
+            flash(MSG_DEMASIADOS, 'error')
+            return render_template('admin/restablecer.html', token=token, min_password=MIN_PASSWORD), 429
+
+        nueva = request.form.get('nueva', '')
+        nueva2 = request.form.get('nueva2', '')
+        if len(nueva) < MIN_PASSWORD:
+            flash(f'La contraseña debe tener al menos {MIN_PASSWORD} caracteres.', 'error')
+        elif nueva.lower() == admin['usuario'].lower():
+            flash('La contraseña no puede ser igual al usuario.', 'error')
+        elif check_password_hash(admin['password_hash'], nueva):
+            flash('La contraseña nueva debe ser distinta de la anterior.', 'error')
+        elif nueva != nueva2:
+            flash('Las contraseñas no coinciden.', 'error')
+        else:
+            content_store.actualizar_password_admin(admin['id'], generate_password_hash(nueva))
+            # Cambia la huella: este enlace y todas las sesiones abiertas dejan de valer
+            content_store.borrar_eventos(f"loginu:{admin['usuario'].lower()[:60]}")
+            iniciar_sesion(content_store.obtener_admin_por_id(admin['id']))
+            correo.enviar(_correo_recuperacion(), "Se cambió la contraseña del panel de Megadiseños",
+                          "<p>La contraseña del panel de edición de megadisenos.cl se cambió recién "
+                          "usando el enlace de recuperación.</p><p>Si no fuiste tú, contacta de inmediato "
+                          "a Sertains Labs.</p>")
+            flash('¡Listo! Tu contraseña se cambió y ya iniciaste sesión.', 'exito')
+            return redirect(url_for('admin_editor'))
+
+    return render_template('admin/restablecer.html', token=token, min_password=MIN_PASSWORD)
 
 
 # ── Editor visual ─────────────────────────────────────────
